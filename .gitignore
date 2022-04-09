@@ -1,1 +1,8 @@
+# executables
 matrix
+
+# vscode
+.vscode
+
+# vim swap files
+.*.sw*

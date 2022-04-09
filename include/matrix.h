@@ -14,7 +14,8 @@ using namespace std;
 
 using U = unsigned int;
 
-class Matrix_int
+template<typename T>
+class Matrix
 {
 public:
     U get_nRows() const { return nRows; }
@@ -24,28 +25,28 @@ public:
     void set_nCols(U nc) { nCols = nc; }
 
     // get and set the [i][j]'th element in data.
-    int get_IJ(U i, U j) const { return data[i * nCols + j]; }
-    void set_IJ(U i, U j, int value) const { data[i * nCols + j] = value; }
+    T get_IJ(U i, U j) const { return data[i * nCols + j]; }
+    void set_IJ(U i, U j, T value) const { data[i * nCols + j] = value; }
 
-    Matrix_int(U nr, U nc)
+    Matrix<T>(U nr, U nc)
     {
         nRows = nr;
         nCols = nc;
-        data  = new int[nr * nc];
+        data  = new T[nr * nc];
     }
 
-    ~Matrix_int()
+    ~Matrix<T>()
     {
         delete [] data;
     }
 
     void initialise(U lower, U upper, U discard);
     void display();
-    Matrix_int* multiply(const Matrix_int* B) const;
+    Matrix<T>* multiply(const Matrix<T>* B) const;
 
 private:
     U     nRows;    // number of rows in matrix
     U     nCols;    // number of columns in matrix
-    int*  data;     // the actual data of the matrix
+    T*    data;     // the actual data of the matrix
 };
 

@@ -11,7 +11,7 @@ int LB = -8;        // lower bound for data entries
 int UB = -LB;       // do not modify
 U nDiscards = 100;  // number of discards, for initialisation
 
-void Usage(int argc, char* argv[])
+void Process_ARGV(int argc, char* argv[])
 {
     assert(argc >= 1);
 
@@ -23,25 +23,41 @@ void Usage(int argc, char* argv[])
         printf("Usage: %s [<AR> <AC|BR> <BC>]\n", argv[0]);
         exit(0);
     }
+
+    assert (argc == 4);
+
+    AR = atoi(argv[1]);
+    AC = atoi(argv[2]);
+    BR = AC;
+    BC = atoi(argv[3]);
+
+    DPRINTF("A needs to be %dx%d; B needs to be %dx%d\n", AR, AC, BR, BC);
 }
 
-int main(int argc, char* argv[])
+template<typename T>
+void test()
 {
-    Usage(argc, argv);
-
-    Matrix_int* A = new Matrix_int(AR, AC);
+    Matrix<T>* A = new Matrix<T>(AR, AC);
     A->initialise(LB, UB, nDiscards);
     A->display();
 
-    Matrix_int* B = new Matrix_int(BR, BC);
+    Matrix<T>* B = new Matrix<T>(BR, BC);
     B->initialise(LB, UB, nDiscards);
     B->display();
 
-    Matrix_int* C = A->multiply(B);
+    Matrix<T>* C = A->multiply(B);
     if (C == nullptr)
         printf("AAAAAH -- multiply() failed!!!\n");
     else
         C->display();
+}
+
+int main(int argc, char* argv[])
+{
+    Process_ARGV(argc, argv);
+
+    test<int>();
+    test<double>();
 
     return 0;
 }
