@@ -42,7 +42,13 @@ void test()
     A->display();
 
     Matrix<T>* B = new Matrix<T>(BR, BC);
-    B->initialise(LB, UB, nDiscards);
+    // Do not use the same discard count for A and B.
+    // If you do, A and B will start off at the same location in the
+    // pseudo-random sequence.
+    // e.g.: 7, 3, 5, 2, ...
+    // A = [ 7 3 5 | 2 4 9 | 8 6 1 ]
+    // B = [ 7 3 | 5 2 | 4 9 ]
+    B->initialise(LB, UB, nDiscards + 2 * AR * AC);
     B->display();
 
     Matrix<T>* C = A->multiply(B);

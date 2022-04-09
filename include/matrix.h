@@ -40,7 +40,7 @@ public:
         delete [] data;
     }
 
-    void initialise(U lower, U upper, U discard);
+    void initialise(int lower, int upper, U nDiscards);
     void display();
     Matrix<T>* multiply(const Matrix<T>* B) const;
 
