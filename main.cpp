@@ -7,9 +7,9 @@ U BR = AC; // do not modify
 U BC = 4;
 
 // settings for matrix contents
-int LB = -8;      // lower bound for data entries
-int UB = -UB;     // do not modify
-U nDiscards = 500; // number of discards, for initialisation
+int LB = -8;        // lower bound for data entries
+int UB = -LB;       // do not modify
+U nDiscards = 100;  // number of discards, for initialisation
 
 void Usage(int argc, char* argv[])
 {
