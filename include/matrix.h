@@ -1,11 +1,12 @@
 #pragma once
 
-#include <cstdlib>
-#include <iostream>
-#include <cstring>
-#include <string>
-#include <random>
 #include <assert.h>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <random>
+#include <stdexcept>
+#include <string>
 
 #define DEBUG 0
 #define DPRINTF if (DEBUG) printf

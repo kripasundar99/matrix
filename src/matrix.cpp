@@ -44,7 +44,7 @@ void Matrix<double>::initialise(int lower, int upper, U nDiscards)
 // GFS_display = "get format string for Matrix<T>::display()"
 template<typename T> inline const char* GFS_display();
 template<> inline const char* GFS_display<int>()    { return "%4d%c"; }
-template<> inline const char* GFS_display<double>() { return "%16.16f%c"; }
+template<> inline const char* GFS_display<double>() { return "%8.2f%c"; }
 
 // display the matrix
 template<typename T>
@@ -71,35 +71,49 @@ template<> inline const char* GFS_debug<double>()
 template<typename T>
 Matrix<T>* Matrix<T>::multiply(const Matrix<T>* B) const
 {
-    U AR = nRows;
-    U AC = nCols;
-    U BR = B->get_nRows();
-    U BC = B->get_nCols();
-
-    assert(AC == BR);
-
-    Matrix<T>* C = new Matrix<T>(AR, BC);
-
-    for (U i = 0; i < AR; i++)
+    try
     {
-        for (U k = 0; k < BC; k++)
+        U AR = nRows;
+        U AC = nCols;
+        U BR = B->get_nRows();
+        U BC = B->get_nCols();
+
+        if (AC != BR)
+            throw std::invalid_argument( "multiply(): dimension mismatch" );
+
+        Matrix<T>* C = new Matrix<T>(AR, BC);
+
+        for (U i = 0; i < AR; i++)
         {
-            T sum = 0;
-
-            for (U j = 0; j < AC; j++)
+            for (U k = 0; k < BC; k++)
             {
-                T a = get_IJ(i, j);
-                T b = B->get_IJ(j, k);
-                T prod = a * b;
-                sum += prod;
-                DPRINTF(GFS_debug<T>(), i, j, a, j, k, b, prod, sum);
+                T sum = 0;
+
+                for (U j = 0; j < AC; j++)
+                {
+                    T a = get_IJ(i, j);
+                    T b = B->get_IJ(j, k);
+                    T prod = a * b;
+                    sum += prod;
+                    DPRINTF(GFS_debug<T>(), i, j, a, j, k, b, prod, sum);
+                }
+
+                DPRINTF("----\n");
+
+                C->set_IJ(i, k, sum);
             }
-
-            DPRINTF("----\n");
-
-            C->set_IJ(i, k, sum);
         }
-    }
 
-    return C;
+        return C;
+    }
+    catch(std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << "\n";
+        return nullptr;
+    }
+    catch(...)
+    {
+        std::cerr << "Unknown error\n";
+        return nullptr;
+    }
 }
