@@ -87,16 +87,16 @@ void test()
 
     Matrix<T>* E = new Matrix<T>(AR+2);
     E->randomize(LB, UB, nDiscards << 2);
-    E->display("E");
+    E->display("E AR+2");
 
     E->multiply(E)->display("E^2");
 
     Matrix<T>* F = new Matrix<T>(AR, AC);
     F->setToIdentity();
-    F->display("F");
+    F->display("F AR/AC zero");
 
     F->setToIdentity(AR + 3);
-    F->display("F again");
+    F->display("F AR+3 identity");
 }
 
 int main(int argc, char* argv[])
