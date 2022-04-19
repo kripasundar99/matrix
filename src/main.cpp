@@ -58,10 +58,11 @@ void test()
 
     test_equals(A1, A, "A1 #2", "A");
 
-/*
+    T orig_23 = A1->get_IJ(2, 3);
     A1->set_IJ(2, 3, A1->get_IJ(3, 2));
     test_equals(A1, A, "A1 #3", "A");
-*/
+    A1->set_IJ(2, 3, orig_23);
+    test_equals(A1, A, "A1 #4", "A");
 
     Matrix<T>* B = new Matrix<T>(BR, BC);
     // Do not use the same discard count for A and B.
@@ -93,7 +94,7 @@ void test()
 
     Matrix<T>* F = new Matrix<T>(AR, AC);
     F->setToIdentity();
-    F->display("F AR/AC zero");
+    F->display("F AR/AC negative test for identity");
 
     F->setToIdentity(AR + 3);
     F->display("F AR+3 identity");
