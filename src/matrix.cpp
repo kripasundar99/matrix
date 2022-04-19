@@ -7,12 +7,12 @@
 template class Matrix<int>;
 template class Matrix<double>;
 
-// initialise the matrix
+// Randomize the matrix.
 // Adapt the randomisation logic from
 // https://www.cplusplus.com/reference/random/
 // FYI: distribution(generator) generates a number in the range lower..upper
 template<>
-void Matrix<int>::initialise(int lower, int upper, U nDiscards)
+void Matrix<int>::randomize(int lower, int upper, U nDiscards)
 {
     std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution(lower, upper);
@@ -27,7 +27,7 @@ void Matrix<int>::initialise(int lower, int upper, U nDiscards)
 }
 
 template<>
-void Matrix<double>::initialise(int lower, int upper, U nDiscards)
+void Matrix<double>::randomize(int lower, int upper, U nDiscards)
 {
     std::default_random_engine generator;
     std::uniform_real_distribution<double> distribution(lower, upper);
@@ -41,29 +41,170 @@ void Matrix<double>::initialise(int lower, int upper, U nDiscards)
             set_IJ(i, j, distribution(generator));
 }
 
-// GFS_display = "get format string for Matrix<T>::display()"
+
+// ----------------------------------------------------
+
+// Here, and below, "GFS" means "get format string"
+
+// GFS_display = GFS for Matrix<T>::display()
 template<typename T> inline const char* GFS_display();
 template<> inline const char* GFS_display<int>()    { return "%4d%c"; }
 template<> inline const char* GFS_display<double>() { return "%8.2f%c"; }
 
 // display the matrix
 template<typename T>
-void Matrix<T>::display()
+void Matrix<T>::display(string label /* = "Matrix" */) const
 {
-    printf("nRows = %d; nCols = %d\n", nRows, nCols);
+    printf("%s: %d x %d\n", label.c_str(), nRows, nCols);
     for (U i = 0; i < nRows; i++)
         for (U j = 0; j < nCols; j++)
             printf(GFS_display<T>(), get_IJ(i, j), ((j == (nCols-1)) ? '\n' : ' '));
     printf("----\n");
 }
 
-// GFS_debug = "get format string for Matrix<T>::debug()"
-template<typename T> inline const char* GFS_debug();
-template<> inline const char* GFS_debug<int>()
+
+// ----------------------------------------------------
+
+
+template<typename T>
+void Matrix<T>::setToZero()
+{
+    memset(data, 0, nRows * nCols * sizeof(T));
+}
+
+
+// ----------------------------------------------------
+
+
+template<typename T>
+void Matrix<T>::setToIdentity()
+{
+    try
+    {
+        if (nRows != nCols)
+            throw std::invalid_argument( "setToIdentity(): not a square" );
+
+        setToZero();
+
+        for (U i = 0; i < nRows; i++)
+            set_IJ(i, i, 1);
+    }
+    catch(std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << "\n";
+    }
+    catch(...)
+    {
+        std::cerr << "Unknown error\n";
+    }
+}
+
+
+// ----------------------------------------------------
+
+
+template<typename T>
+void Matrix<T>::setToIdentity(U nr)
+{
+    delete [] data;
+
+    nRows = nCols = nr;
+    data  = new T[nRows * nCols];
+
+    setToZero();
+
+    for (U i = 0; i < nRows; i++)
+        set_IJ(i, i, 1);
+}
+
+
+// ----------------------------------------------------
+
+
+template<typename T>
+void Matrix<T>::copyFrom(const Matrix<T>* B)
+{
+    delete [] data;
+
+    nRows = B->get_nRows();
+    nCols = B->get_nCols();
+    data  = new T[nRows * nCols];
+
+    memcpy(data, B->get_data(), nRows * nCols * sizeof(T));
+}
+
+
+// ----------------------------------------------------
+
+// GFS_equals1 = GFS #1 for Matrix<T>::equals()
+template<typename T> inline const char* GFS_equals1();
+template<> inline const char* GFS_equals1<int>()
+{
+    return "i = %d; j = %d; a = %d; b = %d; a - b = %d\n";
+}
+template<> inline const char* GFS_equals1<double>()
+{
+    return "i = %d; j = %d; a = %f; b = %f; a - b = %f\n";
+}
+
+// GFS_equals2 = GFS #2 for Matrix<T>::equals()
+template<typename T> inline const char* GFS_equals2();
+template<> inline const char* GFS_equals2<int>()
+{
+    return "a = m1[%d][%d] = %d; m2 = B[%d][%d] = %d; a - b = %d\n";
+}
+template<> inline const char* GFS_equals2<double>()
+{
+    return "a = m1[%d][%d] = %40.40f; b = m2[%d][%d] = %40.40f; a - b = %40.40f\n";
+}
+
+
+template<typename T>
+bool Matrix<T>::equals(const Matrix<T>* B) const
+{
+    U AR = nRows;
+    U AC = nCols;
+    U BR = B->get_nRows();
+    U BC = B->get_nCols();
+
+    if ((AR != BR) || (AC != BC))
+    {
+        DPRINTF(1)("dimension mismatch: m1[%d,%d] and m2[%d,%d]\n", AR, AC, BR, BC);
+        return false;
+    }
+
+    for (U i = 0; i < nRows; i++)
+    {
+        for (U j = 0; j < nCols; j++)
+        {
+            T a = get_IJ(i, j);
+            T b = B->get_IJ(i, j);
+
+            DPRINTF(1)(GFS_equals1<T>(), i, j, a, b, a - b);
+
+            if (a != b)
+            {
+                DPRINTF(1)(GFS_equals2<T>(), i, j, a, i, j, b, a - b);
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+
+// ----------------------------------------------------
+
+
+
+// GFS_multiply = GFS for Matrix<T>::multiply()
+template<typename T> inline const char* GFS_multiply();
+template<> inline const char* GFS_multiply<int>()
 {
     return "a = A[%d][%d] = %d; b = B[%d][%d] = %d; a * b = %d; sum = %d\n";
 }
-template<> inline const char* GFS_debug<double>()
+template<> inline const char* GFS_multiply<double>()
 {
     return "a = A[%d][%d] = %f; b = B[%d][%d] = %f; a * b = %f; sum = %f\n";
 }
@@ -95,10 +236,10 @@ Matrix<T>* Matrix<T>::multiply(const Matrix<T>* B) const
                     T b = B->get_IJ(j, k);
                     T prod = a * b;
                     sum += prod;
-                    DPRINTF(GFS_debug<T>(), i, j, a, j, k, b, prod, sum);
+                    DPRINTF(2)(GFS_multiply<T>(), i, j, a, j, k, b, prod, sum);
                 }
 
-                DPRINTF("----\n");
+                DPRINTF(2)("----\n");
 
                 C->set_IJ(i, k, sum);
             }

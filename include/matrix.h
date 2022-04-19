@@ -9,7 +9,7 @@
 #include <string>
 
 #define DEBUG 0
-#define DPRINTF if (DEBUG) printf
+#define DPRINTF(_level) if (DEBUG >= (_level)) printf
 
 using namespace std;
 
@@ -25,29 +25,70 @@ public:
     U get_nCols() const { return nCols; }
     void set_nCols(U nc) { nCols = nc; }
 
-    // get and set the [i][j]'th element in data.
+    // Get and set the [i][j]'th element in data.
     T get_IJ(U i, U j) const { return data[i * nCols + j]; }
     void set_IJ(U i, U j, T value) const { data[i * nCols + j] = value; }
 
-    Matrix<T>(U nr, U nc)
-    {
-        nRows = nr;
-        nCols = nc;
-        data  = new T[nr * nc];
-    }
+    // Get direct access to the data block.
+    T* get_data() const { return data; }
+    // We don't need set_data().
 
-    ~Matrix<T>()
-    {
-        delete [] data;
-    }
+    Matrix<T>(U nr, U nc)   { construct(nr, nc); }
+    Matrix<T>(U n)          { construct(n, n); }
+    ~Matrix<T>()            { delete [] data; }
 
-    void initialise(int lower, int upper, U nDiscards);
-    void display();
+    void randomize(int lower, int upper, U nDiscards);
+    void display(string label = "Matrix") const;
+
+    // Set to zero matrix.  Need not be square.
+    void setToZero();
+
+    // Set to identity matrix of existing dimensions.  Must already be square.
+    void setToIdentity();
+
+    // Set to [n x n] identity matrix.  Will be square by construction.
+    void setToIdentity(U n);
+
+    // Copy data from B into A.
+    void copyFrom(const Matrix<T>* B);
+
+    bool equals(const Matrix<T>* B) const;
+
+    // NYI
+    //Matrix<T>* negate() const;
+    //Matrix<T>* add(const Matrix<T>* B) const;
+    //Matrix<T>* subtract(const Matrix<T>* B) const;
+
     Matrix<T>* multiply(const Matrix<T>* B) const;
 
 private:
     U     nRows;    // number of rows in matrix
     U     nCols;    // number of columns in matrix
     T*    data;     // the actual data of the matrix
+
+    void construct(U nr, U nc)
+    {
+        try
+        {
+            if (!nr)
+                throw std::invalid_argument( "Matrix<T>(): zero rows" );
+            if (!nc)
+                throw std::invalid_argument( "Matrix<T>(): zero cols" );
+
+            nRows = nr;
+            nCols = nc;
+            data  = new T[nRows * nCols];
+        }
+        catch(std::exception &e)
+        {
+            std::cerr << "Error: " << e.what() << "\n";
+            exit(1);
+        }
+        catch(...)
+        {
+            std::cerr << "Unknown error\n";
+            exit(1);
+        }
+    }
 };
 
