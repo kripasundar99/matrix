@@ -31,7 +31,7 @@ void Process_ARGV(int argc, char* argv[])
     BR = AC;
     BC = atoi(argv[3]);
 
-    DPRINTF(1)("A needs to be %dx%d; B needs to be %dx%d\n", AR, AC, BR, BC);
+    DPRINTF(1)("m1 needs to be %dx%d; m2 needs to be %dx%d\n", AR, AC, BR, BC);
 }
 
 
@@ -47,57 +47,57 @@ void test_equals(Matrix<T>* m1, Matrix<T>* m2, string s1, string s2)
 template<typename T>
 void test()
 {
-    Matrix<T>* A = new Matrix<T>(AR, AC);
-    A->randomize(LB, UB, nDiscards);
-    A->display("A");
+    Matrix<T>* m1 = new Matrix<T>(AR, AC);
+    m1->randomize(LB, UB, nDiscards);
+    m1->display("m1");
 
-    Matrix<T>* A1 = new Matrix<T>(1,1);
-    A1->display("A1 #1");
-    A1->copy_from(A);
-    A1->display("A1 #2");
+    Matrix<T>* m1a = new Matrix<T>(1,1);
+    m1a->display("m1a #1");
+    m1a->copy_from(m1);
+    m1a->display("m1a #2");
 
-    test_equals(A1, A, "A1 #2", "A");
+    test_equals(m1a, m1, "m1a #2", "m1");
 
-    T orig_23 = A1->get_IJ(2, 3);
-    A1->set_IJ(2, 3, A1->get_IJ(3, 2));
-    test_equals(A1, A, "A1 #3", "A");
-    A1->set_IJ(2, 3, orig_23);
-    test_equals(A1, A, "A1 #4", "A");
+    T orig_23 = m1a->get_IJ(2, 3);
+    m1a->set_IJ(2, 3, m1a->get_IJ(3, 2));
+    test_equals(m1a, m1, "m1a #3", "m1");
+    m1a->set_IJ(2, 3, orig_23);
+    test_equals(m1a, m1, "m1a #4", "m1");
 
-    Matrix<T>* B = new Matrix<T>(BR, BC);
-    // Do not use the same discard count for A and B.
-    // If you do, A and B will start off at the same location in the
+    Matrix<T>* m2 = new Matrix<T>(BR, BC);
+    // Do not use the same discard count for m1 and m2.
+    // If you do, m1 and m2 will start off at the same location in the
     // pseudo-random sequence.
     // e.g.: 7, 3, 5, 2, ...
-    // A = [ 7 3 5 | 2 4 9 | 8 6 1 ]
-    // B = [ 7 3 | 5 2 | 4 9 ]
-    B->randomize(LB, UB, nDiscards << 1);
-    B->display("B");
+    // m1 = [ 7 3 5 | 2 4 9 | 8 6 1 ]
+    // m2 = [ 7 3 | 5 2 | 4 9 ]
+    m2->randomize(LB, UB, nDiscards << 1);
+    m2->display("m2");
 
-    test_equals(A, B, "A", "B");
+    test_equals(m1, m2, "m1", "m2");
 
-    Matrix<T>* C = A->multiply(B);
-    if (C != nullptr)
-        C->display("C");
+    Matrix<T>* m3 = m1->multiply(m2);
+    if (m3 != nullptr)
+        m3->display("m3");
 
-    Matrix<T>* D = A1->multiply(B);
-    if (D != nullptr)
-        D->display("D");
+    Matrix<T>* m4 = m1a->multiply(m2);
+    if (m4 != nullptr)
+        m4->display("m4");
 
-    test_equals(C, D, "C", "D");
+    test_equals(m3, m4, "m3", "m4");
 
-    Matrix<T>* E = new Matrix<T>(AR+2);
-    E->randomize(LB, UB, nDiscards << 2);
-    E->display("E AR+2");
+    Matrix<T>* m5 = new Matrix<T>(AR+2);
+    m5->randomize(LB, UB, nDiscards << 2);
+    m5->display("m5 AR+2");
 
-    E->multiply(E)->display("E^2");
+    m5->multiply(m5)->display("m5^2");
 
-    Matrix<T>* F = new Matrix<T>(AR, AC);
-    F->set_to_identity();
-    F->display("F AR/AC negative test for identity");
+    Matrix<T>* m6 = new Matrix<T>(AR, AC);
+    m6->set_to_identity();
+    m6->display("m6 AR/AC negative test for identity");
 
-    F->set_to_identity(AR + 3);
-    F->display("F AR+3 identity");
+    m6->set_to_identity(AR + 3);
+    m6->display("m6 AR+3 identity");
 }
 
 int main(int argc, char* argv[])
