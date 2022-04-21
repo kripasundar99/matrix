@@ -67,7 +67,7 @@ void Matrix<T>::display(string label /* = "Matrix" */) const
 
 
 template<typename T>
-void Matrix<T>::setToZero()
+void Matrix<T>::set_to_zero()
 {
     memset(data, 0, nRows * nCols * sizeof(T));
 }
@@ -77,14 +77,14 @@ void Matrix<T>::setToZero()
 
 
 template<typename T>
-void Matrix<T>::setToIdentity()
+void Matrix<T>::set_to_identity()
 {
     try
     {
         if (nRows != nCols)
-            throw std::invalid_argument( "setToIdentity(): not a square" );
+            throw std::invalid_argument( "set_to_identity(): not a square" );
 
-        setToZero();
+        set_to_zero();
 
         for (U i = 0; i < nRows; i++)
             set_IJ(i, i, 1);
@@ -95,7 +95,7 @@ void Matrix<T>::setToIdentity()
     }
     catch(...)
     {
-        std::cerr << "Unknown error\n";
+        std::cerr << "Error: Unknown problem\n";
     }
 }
 
@@ -104,14 +104,14 @@ void Matrix<T>::setToIdentity()
 
 
 template<typename T>
-void Matrix<T>::setToIdentity(U nr)
+void Matrix<T>::set_to_identity(U nr)
 {
     delete [] data;
 
     nRows = nCols = nr;
     data  = new T[nRows * nCols];
 
-    setToZero();
+    set_to_zero();
 
     for (U i = 0; i < nRows; i++)
         set_IJ(i, i, 1);
@@ -122,7 +122,7 @@ void Matrix<T>::setToIdentity(U nr)
 
 
 template<typename T>
-void Matrix<T>::copyFrom(const Matrix<T>* B)
+void Matrix<T>::copy_from(const Matrix<T>* B)
 {
     delete [] data;
 
@@ -254,7 +254,7 @@ Matrix<T>* Matrix<T>::multiply(const Matrix<T>* B) const
     }
     catch(...)
     {
-        std::cerr << "Unknown error\n";
+        std::cerr << "Error: Unknown problem\n";
         return nullptr;
     }
 }

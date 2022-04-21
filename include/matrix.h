@@ -41,16 +41,16 @@ public:
     void display(string label = "Matrix") const;
 
     // Set to zero matrix.  Need not be square.
-    void setToZero();
+    void set_to_zero();
 
     // Set to identity matrix of existing dimensions.  Must already be square.
-    void setToIdentity();
+    void set_to_identity();
 
     // Set to [n x n] identity matrix.  Will be square by construction.
-    void setToIdentity(U n);
+    void set_to_identity(U n);
 
     // Copy data from B into A.
-    void copyFrom(const Matrix<T>* B);
+    void copy_from(const Matrix<T>* B);
 
     bool equals(const Matrix<T>* B) const;
 
@@ -64,7 +64,7 @@ public:
 private:
     U     nRows;    // number of rows in matrix
     U     nCols;    // number of columns in matrix
-    T*    data;     // the actual data of the matrix
+    T*    data;     // the data = the actual contents of the matrix
 
     void construct(U nr, U nc)
     {
@@ -86,7 +86,7 @@ private:
         }
         catch(...)
         {
-            std::cerr << "Unknown error\n";
+            std::cerr << "Error: Unknown problem\n";
             exit(1);
         }
     }

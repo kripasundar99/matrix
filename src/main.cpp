@@ -53,7 +53,7 @@ void test()
 
     Matrix<T>* A1 = new Matrix<T>(1,1);
     A1->display("A1 #1");
-    A1->copyFrom(A);
+    A1->copy_from(A);
     A1->display("A1 #2");
 
     test_equals(A1, A, "A1 #2", "A");
@@ -93,10 +93,10 @@ void test()
     E->multiply(E)->display("E^2");
 
     Matrix<T>* F = new Matrix<T>(AR, AC);
-    F->setToIdentity();
+    F->set_to_identity();
     F->display("F AR/AC negative test for identity");
 
-    F->setToIdentity(AR + 3);
+    F->set_to_identity(AR + 3);
     F->display("F AR+3 identity");
 }
 
