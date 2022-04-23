@@ -2,17 +2,17 @@
 
 // Explicit template instantiation as advised at
 // https://stackoverflow.com/questions/115703/storing-c-template-function-definitions-in-a-cpp-file .
-// This allows the method templates to be defined in this .cpp,
+// This allows us to define the method templates here in this .cpp,
 // instead of in the .h .
 template class Matrix<int>;
 template class Matrix<double>;
 
-// Randomize the matrix.
+// Set each element of A to a random value.
 // Adapt the randomisation logic from
 // https://www.cplusplus.com/reference/random/
 // FYI: distribution(generator) generates a number in the range lower..upper
 template<>
-void Matrix<int>::randomize(int lower, int upper, U nDiscards)
+void Matrix<int>::set_to_random(int lower, int upper, U nDiscards)
 {
     std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution(lower, upper);
@@ -27,7 +27,7 @@ void Matrix<int>::randomize(int lower, int upper, U nDiscards)
 }
 
 template<>
-void Matrix<double>::randomize(int lower, int upper, U nDiscards)
+void Matrix<double>::set_to_random(int lower, int upper, U nDiscards)
 {
     std::default_random_engine generator;
     std::uniform_real_distribution<double> distribution(lower, upper);
@@ -56,9 +56,16 @@ template<typename T>
 void Matrix<T>::display(string label /* = "Matrix" */) const
 {
     printf("%s: %d x %d\n", label.c_str(), nRows, nCols);
-    for (U i = 0; i < nRows; i++)
-        for (U j = 0; j < nCols; j++)
-            printf(GFS_display<T>(), get_IJ(i, j), ((j == (nCols-1)) ? '\n' : ' '));
+
+    // display the full matrix only for debug mode
+    if (DEBUG_LEVEL > 0)
+    {
+        for (U i = 0; i < nRows; i++)
+            for (U j = 0; j < nCols; j++)
+                printf(GFS_display<T>(), get_IJ(i, j),
+                    ((j == (nCols-1)) ? '\n' : ' '));
+    }
+
     printf("----\n");
 }
 
@@ -122,7 +129,7 @@ void Matrix<T>::set_to_identity(U nr)
 
 
 template<typename T>
-void Matrix<T>::copy_from(const Matrix<T>* B)
+void Matrix<T>::set_to_copy(const Matrix<T>* B)
 {
     delete [] data;
 

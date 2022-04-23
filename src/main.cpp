@@ -48,12 +48,12 @@ template<typename T>
 void test()
 {
     Matrix<T>* m1 = new Matrix<T>(AR, AC);
-    m1->randomize(LB, UB, nDiscards);
+    m1->set_to_random(LB, UB, nDiscards);
     m1->display("m1");
 
     Matrix<T>* m1a = new Matrix<T>(1,1);
     m1a->display("m1a #1");
-    m1a->copy_from(m1);
+    m1a->set_to_copy(m1);
     m1a->display("m1a #2");
 
     test_equals(m1a, m1, "m1a #2", "m1");
@@ -71,7 +71,7 @@ void test()
     // e.g.: 7, 3, 5, 2, ...
     // m1 = [ 7 3 5 | 2 4 9 | 8 6 1 ]
     // m2 = [ 7 3 | 5 2 | 4 9 ]
-    m2->randomize(LB, UB, nDiscards << 1);
+    m2->set_to_random(LB, UB, nDiscards << 1);
     m2->display("m2");
 
     test_equals(m1, m2, "m1", "m2");
@@ -87,7 +87,7 @@ void test()
     test_equals(m3, m4, "m3", "m4");
 
     Matrix<T>* m5 = new Matrix<T>(AR+2);
-    m5->randomize(LB, UB, nDiscards << 2);
+    m5->set_to_random(LB, UB, nDiscards << 2);
     m5->display("m5 AR+2");
 
     m5->multiply(m5)->display("m5^2");

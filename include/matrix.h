@@ -1,5 +1,32 @@
 #pragma once
 
+/*
+
+Terminology and conventions
+
+------------------------------------------------------------------------
+
+Matrix names:
+In matrix.h and matrix.cpp, we use A, B, and C for matrix names.
+In client code (main.cpp), we never use the names A, B, and C.
+
+* A: synonym for current matrix (`this` or current object in C++)
+* B: the second operand of a binary operation
+* C: the destination of a binary operation
+
+------------------------------------------------------------------------
+
+Methods:
+
+* operations that modify the whole of A
+  - they have the prefix `set_to_`.
+  - they modify `data` in-place.
+  - they do *not* modify `nRows` or `nCols`.
+
+------------------------------------------------------------------------
+
+*/
+
 #include <assert.h>
 #include <cstdlib>
 #include <cstring>
@@ -8,8 +35,8 @@
 #include <stdexcept>
 #include <string>
 
-#define DEBUG 0
-#define DPRINTF(_level) if (DEBUG >= (_level)) printf
+#define DEBUG_LEVEL 0
+#define DPRINTF(_level) if (DEBUG_LEVEL >= (_level)) printf
 
 using namespace std;
 
@@ -19,6 +46,13 @@ template<typename T>
 class Matrix
 {
 public:
+
+    // ------------------ constructors and destructor ------------------ //
+    Matrix<T>(U nr, U nc)   { construct(nr, nc); }
+    Matrix<T>(U n)          { construct(n, n); }
+    ~Matrix<T>()            { delete [] data; }
+
+    // ------------------ getters and setters ------------------ //
     U get_nRows() const { return nRows; }
     void set_nRows(U nr) { nRows = nr; }
 
@@ -31,34 +65,47 @@ public:
 
     // Get direct access to the data block.
     T* get_data() const { return data; }
-    // We don't need set_data().
+    // We don't want, and we don't need set_data().
 
-    Matrix<T>(U nr, U nc)   { construct(nr, nc); }
-    Matrix<T>(U n)          { construct(n, n); }
-    ~Matrix<T>()            { delete [] data; }
+    // --------------- methods that modify the whole of A --------------- //
+    // Set each element of A to a random value.
+    void set_to_random(int lower, int upper, U nDiscards);
 
-    void randomize(int lower, int upper, U nDiscards);
-    void display(string label = "Matrix") const;
-
-    // Set to zero matrix.  Need not be square.
+    // Set A to zero matrix.  Need not be square.
     void set_to_zero();
 
-    // Set to identity matrix of existing dimensions.  Must already be square.
+    // Set A to identity matrix of existing dimensions.  Must already be square.
     void set_to_identity();
 
-    // Set to [n x n] identity matrix.  Will be square by construction.
+    // Set A to [n x n] identity matrix.  Will be square by construction.
     void set_to_identity(U n);
 
-    // Copy data from B into A.
-    void copy_from(const Matrix<T>* B);
+    // Set A to -A.
+    void set_to_negative();
 
+    // Copy data from B into A.
+    void set_to_copy(const Matrix<T>* B);
+
+    // ---------------- methods that do not modify A ---------------- //
+    // Display A.
+    void display(string label = "Matrix") const;
+
+    // return A == B
     bool equals(const Matrix<T>* B) const;
 
-    // NYI
-    //Matrix<T>* negate() const;
-    //Matrix<T>* add(const Matrix<T>* B) const;
-    //Matrix<T>* subtract(const Matrix<T>* B) const;
+    // return A != B
+    bool not_equals(const Matrix<T>* B) const;
 
+    // return -A
+    Matrix<T>* get_negative() const;
+
+    // return A + B
+    Matrix<T>* add(const Matrix<T>* B) const;
+
+    // return A - B
+    Matrix<T>* subtract(const Matrix<T>* B) const;
+
+    // return A * B
     Matrix<T>* multiply(const Matrix<T>* B) const;
 
 private:
