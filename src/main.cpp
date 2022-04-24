@@ -103,6 +103,8 @@ void test()
 
     test_equals(m3, m4, "m3", "m4");
 
+    test_equals(m3, m4->get_negative(), "m3", "negative m4");
+
     Matrix<T>* m5 = new Matrix<T>(AR+2);
     m5->set_to_random(LB, UB, nDiscards << 2);
     m5->display("m5 AR+2");
