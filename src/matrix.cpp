@@ -106,9 +106,7 @@ void Matrix<T>::set_to_identity()
     }
 }
 
-
 // ----------------------------------------------------
-
 
 template<typename T>
 void Matrix<T>::set_to_identity(U nr)
@@ -124,9 +122,7 @@ void Matrix<T>::set_to_identity(U nr)
         set_IJ(i, i, 1);
 }
 
-
 // ----------------------------------------------------
-
 
 template<typename T>
 void Matrix<T>::set_to_copy(const Matrix<T>* B)
@@ -140,6 +136,24 @@ void Matrix<T>::set_to_copy(const Matrix<T>* B)
     memcpy(data, B->get_data(), nRows * nCols * sizeof(T));
 }
 
+// ----------------------------------------------------
+
+template<typename T>
+bool Matrix<T>::dimensions_match(const Matrix<T>* B) const
+{
+    U AR = nRows;
+    U AC = nCols;
+    U BR = B->get_nRows();
+    U BC = B->get_nCols();
+
+    if ((AR != BR) || (AC != BC))
+    {
+        DPRINTF(1)("dimension mismatch: A[%d,%d] and B[%d,%d]\n", AR, AC, BR, BC);
+        return false;
+    }
+
+    return true;
+}
 
 // ----------------------------------------------------
 
@@ -166,19 +180,13 @@ template<> inline const char* GFS_equals2<double>()
 }
 
 
+
+
 template<typename T>
 bool Matrix<T>::equals(const Matrix<T>* B) const
 {
-    U AR = nRows;
-    U AC = nCols;
-    U BR = B->get_nRows();
-    U BC = B->get_nCols();
-
-    if ((AR != BR) || (AC != BC))
-    {
-        DPRINTF(1)("dimension mismatch: m1[%d,%d] and m2[%d,%d]\n", AR, AC, BR, BC);
+    if (!dimensions_match(B))
         return false;
-    }
 
     for (U i = 0; i < nRows; i++)
     {
@@ -200,10 +208,85 @@ bool Matrix<T>::equals(const Matrix<T>* B) const
     return true;
 }
 
+// ----------------------------------------------------
+
+template<typename T>
+void Matrix<T>::set_to_negative()
+{
+    for (U i = 0; i < nRows; i++)
+        for (U j = 0; j < nCols; j++)
+            set_IJ(i, j, -get_IJ(i, j));
+}
 
 // ----------------------------------------------------
 
+template<typename T>
+Matrix<T>* Matrix<T>::get_negative() const
+{
+    Matrix<T>* C = new Matrix<T>(nRows, nCols);
 
+    for (U i = 0; i < nRows; i++)
+        for (U j = 0; j < nCols; j++)
+            C->set_IJ(i, j, -get_IJ(i, j));
+
+    return C;
+}
+
+// ----------------------------------------------------
+
+template<typename T>
+Matrix<T>* Matrix<T>::helper_for_add_sub(bool isAddition, const Matrix<T>* B) const
+{
+    try
+    {
+        if (!dimensions_match(B))
+        {
+            string msg =
+                (string(isAddition ? "add" : "sub")
+                    + string("(): dimension mismatch"));
+            throw std::invalid_argument(msg);
+        }
+
+        Matrix<T>* C = new Matrix<T>(nRows, nCols);
+
+        for (U i = 0; i < nRows; i++)
+        {
+            for (U j = 0; j < nCols; j++)
+            {
+                T a = get_IJ(i, j);
+                T b = B->get_IJ(i, j);
+                T sum = (isAddition ? (a + b) : (a - b));
+                C->set_IJ(i, j, sum);
+            }
+        }
+
+        return C;
+    }
+    catch(std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << "\n";
+        return nullptr;
+    }
+    catch(...)
+    {
+        std::cerr << "Error: Unknown problem\n";
+        return nullptr;
+    }
+}
+
+template<typename T>
+Matrix<T>* Matrix<T>::add(const Matrix<T>* B) const
+{
+    return helper_for_add_sub(true, B);
+}
+
+template<typename T>
+Matrix<T>* Matrix<T>::subtract(const Matrix<T>* B) const
+{
+    return helper_for_add_sub(false, B);
+}
+
+// ----------------------------------------------------
 
 // GFS_multiply = GFS for Matrix<T>::multiply()
 template<typename T> inline const char* GFS_multiply();

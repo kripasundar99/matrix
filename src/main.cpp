@@ -61,8 +61,25 @@ void test()
     T orig_23 = m1a->get_IJ(2, 3);
     m1a->set_IJ(2, 3, m1a->get_IJ(3, 2));
     test_equals(m1a, m1, "m1a #3", "m1");
+
+    m1->add(m1a)->display("m1+m1a");
+
+    m1->subtract(m1a)->display("m1-m1a");
+
     m1a->set_IJ(2, 3, orig_23);
     test_equals(m1a, m1, "m1a #4", "m1");
+
+    m1a->set_to_negative();
+
+    test_equals(m1a, m1->get_negative(),
+        "m1a after set_to_negative", "m1->get_negative");
+
+    m1->add(m1a)->display("m1+m1a");
+
+    /*
+    DPRINTF(0)("EARLY EXIT!!!");
+    return;
+    */
 
     Matrix<T>* m2 = new Matrix<T>(BR, BC);
     // Do not use the same discard count for m1 and m2.
@@ -98,6 +115,13 @@ void test()
 
     m6->set_to_identity(AR + 3);
     m6->display("m6 AR+3 identity");
+
+    m1->add(m2);
+    DPRINTF(0)("m1+m2 negative test\n----\n");
+    m1->subtract(m2);
+    DPRINTF(0)("m1-m2 negative test\n----\n");
+
+    m3->add(m4)->display("m3+m4");
 }
 
 int main(int argc, char* argv[])

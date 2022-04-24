@@ -90,11 +90,11 @@ public:
     // Display A.
     void display(string label = "Matrix") const;
 
+    // return "A.dimensions == B.dimensions"
+    bool dimensions_match(const Matrix<T>* B) const;
+
     // return A == B
     bool equals(const Matrix<T>* B) const;
-
-    // return A != B
-    bool not_equals(const Matrix<T>* B) const;
 
     // return -A
     Matrix<T>* get_negative() const;
@@ -137,5 +137,9 @@ private:
             exit(1);
         }
     }
+
+
+    // helper
+    Matrix<T>* helper_for_add_sub(bool isAddition, const Matrix<T>* B) const;
 };
 
