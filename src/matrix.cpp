@@ -53,12 +53,13 @@ template<> inline const char* GFS_display<double>() { return "%8.2f%c"; }
 
 // display the matrix
 template<typename T>
-void Matrix<T>::display(string label /* = "Matrix" */) const
+void Matrix<T>::display(string label /* = "Matrix" */,
+    bool always_show_data /* = false */) const
 {
     printf("%s: %d x %d\n", label.c_str(), nRows, nCols);
 
     // display the full matrix only for debug mode
-    if (DEBUG_LEVEL > 0)
+    if (always_show_data || (DEBUG_LEVEL > 0))
     {
         for (U i = 0; i < nRows; i++)
             for (U j = 0; j < nCols; j++)
@@ -297,6 +298,61 @@ template<> inline const char* GFS_multiply<int>()
 template<> inline const char* GFS_multiply<double>()
 {
     return "a = A[%d][%d] = %f; b = B[%d][%d] = %f; a * b = %f; sum = %f\n";
+}
+
+template<typename T>
+Matrix<T>* Matrix<T>::multiply_block(const Matrix<T>* B,
+    U init_row, U init_col, U size) const
+{
+    try
+    {
+        U AR = nRows;
+        U AC = nCols;
+        U BR = B->get_nRows();
+        U BC = B->get_nCols();
+
+        if ((AR < (init_row + size)) || (AC < (init_col + size)) ||
+            (BR < (init_row + size)) || (BC < (init_col + size)))
+            throw std::invalid_argument( "multiply(): sub-matrix doesn't fit" );
+
+        Matrix<T>* C = new Matrix<T>(size, size);
+
+        for (U i = 0; i < size; i++)
+        {
+            for (U k = 0; k < size; k++)
+            {
+                T sum = 0;
+
+                for (U j = 0; j < size; j++)
+                {
+                    T a = get_IJ(init_row + i, init_col + j);
+                    T b = B->get_IJ(init_row + j, init_col + k);
+                    T prod = a * b;
+                    sum += prod;
+                    DPRINTF(2)(GFS_multiply<T>(),
+                        init_row + i, init_col + j, a,
+                        init_row + j, init_col + k, b,
+                        prod, sum);
+                }
+
+                DPRINTF(2)("----\n");
+
+                C->set_IJ(i, k, sum);
+            }
+        }
+
+        return C;
+    }
+    catch(std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << "\n";
+        return nullptr;
+    }
+    catch(...)
+    {
+        std::cerr << "Error: Unknown problem\n";
+        return nullptr;
+    }
 }
 
 template<typename T>

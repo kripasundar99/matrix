@@ -24,4 +24,4 @@ Not yet implemented.
 * unary operations:
   - <code>get_determinant</code>, <code>get_inverse</code>
 * binary operations:
-  - <code>mutiply_by_Strassen</code>
+  - <code>multiply_by_Strassen</code>

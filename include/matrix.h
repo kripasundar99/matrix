@@ -88,7 +88,7 @@ public:
 
     // ---------------- methods that do not modify A ---------------- //
     // Display A.
-    void display(string label = "Matrix") const;
+    void display(string label = "Matrix", bool always_show_data = false) const;
 
     // return "A.dimensions == B.dimensions"
     bool dimensions_match(const Matrix<T>* B) const;
@@ -104,6 +104,15 @@ public:
 
     // return A - B
     Matrix<T>* subtract(const Matrix<T>* B) const;
+
+    // Multiply a square block (sub-matrix) of A and B.
+    // The top-left cell is at [init_row, init_col].
+    // The bottom-right cell is at [init_row + size - 1, init_col + size - 1].
+    // Return the result as a square matrix.
+    //
+    // For two [n, n] matrices A and B, multiply_block(B, 0, 0, n) should be
+    // identical to multiply(B).
+    Matrix<T>* multiply_block(const Matrix<T>* B, U init_row, U init_col, U size) const;
 
     // return A * B
     Matrix<T>* multiply(const Matrix<T>* B) const;

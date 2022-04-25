@@ -124,15 +124,39 @@ void test()
     DPRINTF(0)("m1-m2 negative test\n----\n");
 
     m3->add(m4)->display("m3+m4");
+} // test()
+
+
+template<typename T>
+void test_multiply_block()
+{
+    U AR1 = AR + 3;
+
+    Matrix<T>* s1 = new Matrix<T>(AR1, AR1);
+    s1->set_to_random(LB, UB, nDiscards << 3);
+    s1->display("s1");
+
+    Matrix<T>* s2 = new Matrix<T>(AR1, AR1);
+    s2->set_to_random(LB, UB, nDiscards << 4);
+    s2->display("s2");
+
+    test_equals(s1->multiply_block(s2, 0, 0, AR1), s1->multiply(s2),
+        "multiply_block(0,0,AR1)", "multiply(...)");
+
+    s1->multiply_block(s2, 1, 2, AR)->display("multiply_block(1,2,AR)", true);
 }
 
 int main(int argc, char* argv[])
 {
     Process_ARGV(argc, argv);
 
-    //test<int>(); // no need to test `int` for a while
+    test<int>(); // no need to test `int` for a while
 
     test<double>();
+
+    test_multiply_block<int>();
+
+    test_multiply_block<double>();
 
     return 0;
 }
