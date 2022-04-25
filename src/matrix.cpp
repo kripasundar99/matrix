@@ -7,6 +7,36 @@
 template class Matrix<int>;
 template class Matrix<double>;
 
+// ----------------------------------------------------
+
+template<typename T>
+void Matrix<T>::construct(U nr, U nc)
+{
+    try
+    {
+        if (!nr)
+            throw std::invalid_argument( "Matrix<T>(): zero rows" );
+        if (!nc)
+            throw std::invalid_argument( "Matrix<T>(): zero cols" );
+
+        nRows = nr;
+        nCols = nc;
+        data  = new T[nRows * nCols];
+    }
+    catch(std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << "\n";
+        exit(1);
+    }
+    catch(...)
+    {
+        std::cerr << "Error: Unknown problem\n";
+        exit(1);
+    }
+}
+
+// ----------------------------------------------------
+
 // Set each element of A to a random value.
 // Adapt the randomisation logic from
 // https://www.cplusplus.com/reference/random/

@@ -150,12 +150,11 @@ int main(int argc, char* argv[])
 {
     Process_ARGV(argc, argv);
 
-    test<int>(); // no need to test `int` for a while
+    // no need to test `int` for a while
+    //test<int>();
+    //test_multiply_block<int>();
 
     test<double>();
-
-    test_multiply_block<int>();
-
     test_multiply_block<double>();
 
     return 0;

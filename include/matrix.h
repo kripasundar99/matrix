@@ -87,10 +87,13 @@ public:
     void set_to_copy(const Matrix<T>* B);
 
     // ---------------- methods that do not modify A ---------------- //
-    // Display A.
+    // Display some info about A.
+    // If always_show_data is set, or DEBUG_LEVEL is non-zero, show the
+    // contents of the matrix.
     void display(string label = "Matrix", bool always_show_data = false) const;
 
-    // return "A.dimensions == B.dimensions"
+    // return true if A and B have identical dimensions
+    // i.e., if their row counts match and their column counts match.
     bool dimensions_match(const Matrix<T>* B) const;
 
     // return A == B
@@ -110,7 +113,7 @@ public:
     // The bottom-right cell is at [init_row + size - 1, init_col + size - 1].
     // Return the result as a square matrix.
     //
-    // For two [n, n] matrices A and B, multiply_block(B, 0, 0, n) should be
+    // For two [n x n] matrices A and B, multiply_block(B, 0, 0, n) should be
     // identical to multiply(B).
     Matrix<T>* multiply_block(const Matrix<T>* B, U init_row, U init_col, U size) const;
 
@@ -122,33 +125,10 @@ private:
     U     nCols;    // number of columns in matrix
     T*    data;     // the data = the actual contents of the matrix
 
-    void construct(U nr, U nc)
-    {
-        try
-        {
-            if (!nr)
-                throw std::invalid_argument( "Matrix<T>(): zero rows" );
-            if (!nc)
-                throw std::invalid_argument( "Matrix<T>(): zero cols" );
+    // helper for constructors
+    void construct(U nr, U nc);
 
-            nRows = nr;
-            nCols = nc;
-            data  = new T[nRows * nCols];
-        }
-        catch(std::exception &e)
-        {
-            std::cerr << "Error: " << e.what() << "\n";
-            exit(1);
-        }
-        catch(...)
-        {
-            std::cerr << "Error: Unknown problem\n";
-            exit(1);
-        }
-    }
-
-
-    // helper
+    // helper for add/subtract
     Matrix<T>* helper_for_add_sub(bool isAddition, const Matrix<T>* B) const;
 };
 
