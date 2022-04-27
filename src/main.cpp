@@ -1,15 +1,17 @@
 #include "matrix.h"
 
 // settings for matrix sizes
-U AR = 3;
-U AC = 5;
-U BR = AC; // do not modify
-U BC = 4;
+U AR = 3;   // number of rows in A
+U AC = 5;   // number of cols in A; also number of rows in B
+U BC = 4;   // number of cols in B
 
 // settings for matrix contents
 int LB = -8;        // lower bound for data entries
-int UB = -LB;       // do not modify
 U nDiscards = 100;  // number of discards, for randomisation
+
+// do not modify: derived values
+U BR = AC;      // do not modify: number of rows in B == number of cols in A
+int UB = -LB;   // do not modify: upper bound == - lower bound
 
 void Process_ARGV(int argc, char* argv[])
 {
