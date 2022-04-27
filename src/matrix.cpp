@@ -331,8 +331,9 @@ template<> inline const char* GFS_multiply<double>()
 }
 
 template<typename T>
-Matrix<T>* Matrix<T>::multiply_block(const Matrix<T>* B,
-    U init_row, U init_col, U size) const
+Matrix<T>* Matrix<T>::multiply_blocks(const Matrix<T>* B, U size,
+    U init_row_A /* = 0 */, U init_col_A /* = 0 */,
+    U init_row_B /* = 0 */, U init_col_B /* = 0 */) const
 {
     try
     {
@@ -341,8 +342,8 @@ Matrix<T>* Matrix<T>::multiply_block(const Matrix<T>* B,
         U BR = B->get_nRows();
         U BC = B->get_nCols();
 
-        if ((AR < (init_row + size)) || (AC < (init_col + size)) ||
-            (BR < (init_row + size)) || (BC < (init_col + size)))
+        if ((AR < (init_row_A + size)) || (AC < (init_col_A + size)) ||
+            (BR < (init_row_B + size)) || (BC < (init_col_B + size)))
             throw std::invalid_argument( "multiply(): sub-matrix doesn't fit" );
 
         Matrix<T>* C = new Matrix<T>(size, size);
@@ -355,13 +356,13 @@ Matrix<T>* Matrix<T>::multiply_block(const Matrix<T>* B,
 
                 for (U j = 0; j < size; j++)
                 {
-                    T a = get_IJ(init_row + i, init_col + j);
-                    T b = B->get_IJ(init_row + j, init_col + k);
+                    T a = get_IJ(init_row_A + i, init_col_A + j);
+                    T b = B->get_IJ(init_row_B + j, init_col_B + k);
                     T prod = a * b;
                     sum += prod;
                     DPRINTF(2)(GFS_multiply<T>(),
-                        init_row + i, init_col + j, a,
-                        init_row + j, init_col + k, b,
+                        init_row_A + i, init_col_A + j, a,
+                        init_row_B + j, init_col_B + k, b,
                         prod, sum);
                 }
 
@@ -434,3 +435,12 @@ Matrix<T>* Matrix<T>::multiply(const Matrix<T>* B) const
         return nullptr;
     }
 }
+
+/*
+template<typename T>
+Matrix<T>* Matrix<T>::Strassen_multiply(const Matrix<T>* B) const
+{
+    assert(0);
+    return nullptr;
+}
+*/

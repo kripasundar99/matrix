@@ -65,19 +65,19 @@ public:
 
     // Get direct access to the data block.
     T* get_data() const { return data; }
-    // We don't want, and we don't need set_data().
+    // We don't want, and we don't need, set_data().
 
     // --------------- methods that modify the whole of A --------------- //
     // Set each element of A to a random value.
     void set_to_random(int lower, int upper, U nDiscards);
 
-    // Set A to zero matrix.  Need not be square.
+    // Set A to zero matrix of existing dimensions.  Need not be square.
     void set_to_zero();
 
     // Set A to identity matrix of existing dimensions.  Must already be square.
     void set_to_identity();
 
-    // Set A to [n x n] identity matrix.  Will be square by construction.
+    // Set A to n-by-n identity matrix.  Will be square by construction.
     void set_to_identity(U n);
 
     // Set A to -A.
@@ -108,14 +108,16 @@ public:
     // return A - B
     Matrix<T>* subtract(const Matrix<T>* B) const;
 
-    // Multiply a square block (sub-matrix) of A and B.
-    // The top-left cell is at [init_row, init_col].
-    // The bottom-right cell is at [init_row + size - 1, init_col + size - 1].
+    // Multiply two square blocks (sub-matrices) of A and B.
+    // The top-left cell is at [init_row][init_col].
+    // The bottom-right cell is at [init_row + size - 1][init_col + size - 1].
     // Return the result as a square matrix.
     //
-    // For two [n x n] matrices A and B, multiply_block(B, 0, 0, n) should be
-    // identical to multiply(B).
-    Matrix<T>* multiply_block(const Matrix<T>* B, U init_row, U init_col, U size) const;
+    // For two n-by-n matrices A and B:
+    // multiply_blocks(B, n, 0, 0, 0, 0) == multiply_blocks(B, n) == multiply(B).
+    Matrix<T>* multiply_blocks(const Matrix<T>* B, U size,
+        U init_row_A = 0, U init_col_A = 0, U init_row_B = 0, U init_col_B = 0)
+        const;
 
     // return A * B
     Matrix<T>* multiply(const Matrix<T>* B) const;

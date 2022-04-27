@@ -140,10 +140,10 @@ void test_multiply_block()
     s2->set_to_random(LB, UB, nDiscards << 4);
     s2->display("s2");
 
-    test_equals(s1->multiply_block(s2, 0, 0, AR1), s1->multiply(s2),
-        "multiply_block(0,0,AR1)", "multiply(...)");
+    test_equals(s1->multiply_blocks(s2, AR1), s1->multiply(s2),
+        "multiply_blocks(AR1)", "multiply(...)");
 
-    s1->multiply_block(s2, 1, 2, AR)->display("multiply_block(1,2,AR)", true);
+    s1->multiply_blocks(s2, AR, 1, 2, 2, 1)->display("multiply_blocks(AR,1,2,2,1)", true);
 }
 
 int main(int argc, char* argv[])
