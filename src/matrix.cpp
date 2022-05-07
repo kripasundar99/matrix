@@ -7,6 +7,18 @@
 template class Matrix<int>;
 template class Matrix<double>;
 
+using M_int = Matrix<int>;
+using M_dbl = Matrix<double>;
+
+// Yet another experiment
+template
+Matrix<int>* assemble(Matrix<int>* m11, Matrix<int>* m12,
+    Matrix<int>* m21, Matrix<int>* m22);
+
+template
+Matrix<double>* assemble(Matrix<double>* m11, Matrix<double>* m12,
+    Matrix<double>* m21, Matrix<double>* m22);
+
 // ----------------------------------------------------
 
 template<typename T>
@@ -444,3 +456,25 @@ Matrix<T>* Matrix<T>::Strassen_multiply(const Matrix<T>* B) const
     return nullptr;
 }
 */
+
+// ----------------------------------------------------
+
+// Assemble the four blocks into a large matrix.
+template<typename T>
+Matrix<T>* assemble(Matrix<T>* m11, Matrix<T>* m12,
+    Matrix<T>* m21, Matrix<T>* m22)
+{
+    //bogus; cannot compile;
+
+    for (const auto& m : { m12, m21, m22 })
+    {
+        if (m11->get_nRows() != m->get_nRows())
+            printf("row mismatch\n");
+
+        if (m11->get_nCols() != m->get_nCols())
+            printf("col mismatch\n");
+    }
+
+    return nullptr;
+}
+

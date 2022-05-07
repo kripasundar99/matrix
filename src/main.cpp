@@ -47,7 +47,7 @@ void test_equals(Matrix<T>* m1, Matrix<T>* m2, string s1, string s2)
 }
 
 template<typename T>
-void test()
+void test_basic_ops()
 {
     Matrix<T>* m1 = new Matrix<T>(AR, AC);
     m1->set_to_random(LB, UB, nDiscards);
@@ -126,11 +126,11 @@ void test()
     DPRINTF(0)("m1-m2 negative test\n----\n");
 
     m3->add(m4)->display("m3+m4");
-} // test()
+} // test_basic_ops()
 
 
 template<typename T>
-void test_multiply_block()
+void test_multiply_blocks()
 {
     U AR1 = AR + 3;
 
@@ -143,9 +143,34 @@ void test_multiply_block()
     s2->display("s2");
 
     test_equals(s1->multiply_blocks(s2, AR1), s1->multiply(s2),
-        "multiply_blocks(AR1)", "multiply(...)");
+        "multiply_blocks(AR1)", "multiply()");
 
     s1->multiply_blocks(s2, AR, 1, 2, 2, 1)->display("multiply_blocks(AR,1,2,2,1)", true);
+}
+
+template<typename T>
+void test_assemble()
+{
+    U AR1 = AR + 3;
+
+    Matrix<T>* s1 = new Matrix<T>(AR1, AR1);
+    s1->set_to_random(LB, UB, nDiscards << 3);
+    s1->display("s1");
+
+    Matrix<T>* s2 = new Matrix<T>(AR1+1, AR1);
+    s2->set_to_random(LB, UB, nDiscards << 4);
+    s2->display("s2");
+
+    Matrix<T>* s3 = new Matrix<T>(AR1, AR1-1);
+    s3->set_to_random(LB, UB, nDiscards << 4);
+    s3->display("s3");
+
+    auto p1 = assemble<T>(s1, s1, s3, s1);
+    printf("first assemble\n");
+
+    auto p2 = assemble<T>(s1, s1, s1, s2);
+    printf("second assemble\n");
+
 }
 
 int main(int argc, char* argv[])
@@ -153,11 +178,13 @@ int main(int argc, char* argv[])
     Process_ARGV(argc, argv);
 
     // no need to test `int` for a while
-    //test<int>();
-    //test_multiply_block<int>();
+    //test_basic_ops<int>();
+    //test_multiply_blocks<int>();
 
-    test<double>();
-    test_multiply_block<double>();
+    test_basic_ops<double>();
+    test_multiply_blocks<double>();
+
+    test_assemble<double>();
 
     return 0;
 }

@@ -134,3 +134,8 @@ private:
     Matrix<T>* helper_for_add_sub(bool isAddition, const Matrix<T>* B) const;
 };
 
+// Assemble the four blocks into a large matrix.
+template<typename T>
+Matrix<T>* assemble(Matrix<T>* m11, Matrix<T>* m12,
+    Matrix<T>* m21, Matrix<T>* m22);
+
