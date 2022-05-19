@@ -417,6 +417,8 @@ Matrix<T>* Matrix<T>::multiply_blocks(const Matrix<T>* B, U size,
     }
 }
 
+// ----------------------------------------------------
+
 template<typename T>
 Matrix<T>* Matrix<T>::multiply(const Matrix<T>* B) const
 {
@@ -466,6 +468,51 @@ Matrix<T>* Matrix<T>::multiply(const Matrix<T>* B) const
         return nullptr;
     }
 }
+
+// ----------------------------------------------------
+
+bool is_power_of_2(U n)
+{
+    // Source: http://www.graphics.stanford.edu/~seander/bithacks.html
+    return (n && !(n & (n - 1)));
+}
+
+template<typename T>
+Matrix<T>* Matrix<T>::naive_block_based_multiply(const Matrix<T>* B) const
+{
+    U size = get_nRows();
+    assert(size == get_nCols());
+    assert(size == B->get_nRows());
+    assert(size == B->get_nCols());
+
+    assert(is_power_of_2(size));
+
+    U s2 = size / 2;
+
+    // Source for this naive block-based multiply:
+    // https://en.wikipedia.org/wiki/Strassen_algorithm
+
+    auto A11B11 = multiply_blocks(B, s2);
+    auto A12B21 = multiply_blocks(B, s2, 0, s2, s2, 0);
+    auto C11 = A11B11->add(A12B21);
+
+    auto A11B12 = multiply_blocks(B, s2, 0, 0, 0, s2);
+    auto A12B22 = multiply_blocks(B, s2, 0, s2, s2, s2);
+    auto C12 = A11B12->add(A12B22);
+
+    auto A21B11 = multiply_blocks(B, s2, s2, 0);
+    auto A22B21 = multiply_blocks(B, s2, s2, s2, s2, 0);
+    auto C21 = A21B11->add(A22B21);
+
+    auto A21B12 = multiply_blocks(B, s2, s2, 0, 0, s2);
+    auto A22B22 = multiply_blocks(B, s2, s2, s2, s2, s2);
+    auto C22 = A21B12->add(A22B22);
+
+    return assemble(C11, C12, C21, C22);
+}
+
+
+// ----------------------------------------------------
 
 /*
 template<typename T>

@@ -43,7 +43,7 @@ Methods:
 #include <stdexcept>
 #include <string>
 
-#define DEBUG_LEVEL 0
+#define DEBUG_LEVEL 1
 #define DPRINTF(_level) if (DEBUG_LEVEL >= (_level)) printf
 
 using namespace std;
@@ -134,6 +134,9 @@ public:
     // return A * B
     Matrix<T>* multiply(const Matrix<T>* B) const;
 
+    // return A * B, calculated using a naive block-based algorithm.
+    Matrix<T>* naive_block_based_multiply(const Matrix<T>* B) const;
+
 private:
     U     nRows;    // number of rows in matrix
     U     nCols;    // number of columns in matrix
@@ -151,3 +154,5 @@ template<typename T>
 Matrix<T>* assemble(Matrix<T>* m11, Matrix<T>* m12,
     Matrix<T>* m21, Matrix<T>* m22);
 
+// Simple helper for detecting powers of 2.
+bool is_power_of_2(U n);

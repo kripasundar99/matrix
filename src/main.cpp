@@ -169,6 +169,28 @@ void test_assemble()
     r1->display("r1", true);
 }
 
+template<typename T>
+void test_NBB_multiply()
+{
+    U AR1 = 4; // need power of 2
+
+    auto s1 = new Matrix<T>(AR1, AR1);
+    s1->set_to_random(LB, UB, nDiscards << 6);
+    s1->display("s1", true);
+
+    auto s2 = new Matrix<T>(AR1, AR1);
+    s2->set_to_random(LB, UB, nDiscards << 7);
+    s2->display("s2", true);
+
+    auto p1 = s1->multiply(s2);
+    p1->display("p1", true);
+
+    auto p2 = s1->naive_block_based_multiply(s2);
+    p2->display("p2", true);
+
+    test_equals(p1, p2, "p1", "p2");
+}
+
 int main(int argc, char* argv[])
 {
     Process_ARGV(argc, argv);
@@ -177,10 +199,13 @@ int main(int argc, char* argv[])
     //test_basic_ops<int>();
     //test_multiply_blocks<int>();
 
-    test_basic_ops<double>();
-    test_multiply_blocks<double>();
+    //test_basic_ops<double>();
+    //test_multiply_blocks<double>();
 
-    test_assemble<double>();
+    //test_assemble<double>();
+
+    //test_NBB_multiply<int>();
+    test_NBB_multiply<double>();
 
     return 0;
 }
