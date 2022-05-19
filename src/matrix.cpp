@@ -182,6 +182,25 @@ void Matrix<T>::set_to_copy(const Matrix<T>* B)
 // ----------------------------------------------------
 
 template<typename T>
+void Matrix<T>::copy_block(const Matrix<T>* B, U size,
+    U init_row_A /* = 0 */, U init_col_A /* = 0 */,
+    U init_row_B /* = 0 */, U init_col_B /* = 0 */)
+{
+    assert(get_nRows() >= (init_row_A + size));
+    assert(get_nCols() >= (init_col_A + size));
+
+    assert(B->get_nRows() >= (init_row_B + size));
+    assert(B->get_nCols() >= (init_col_B + size));
+
+    for (U i = 0; i < size; i++)
+        for (U j = 0; j < size; j++)
+            set_IJ(init_row_A + i, init_col_A + j,
+                B->get_IJ(init_row_B + i, init_col_B + j));
+}
+
+// ----------------------------------------------------
+
+template<typename T>
 bool Matrix<T>::dimensions_match(const Matrix<T>* B) const
 {
     U AR = nRows;
@@ -459,22 +478,33 @@ Matrix<T>* Matrix<T>::Strassen_multiply(const Matrix<T>* B) const
 
 // ----------------------------------------------------
 
-// Assemble the four blocks into a large matrix.
+// Assemble the four input square matrices into a single large square matrix.
 template<typename T>
 Matrix<T>* assemble(Matrix<T>* m11, Matrix<T>* m12,
     Matrix<T>* m21, Matrix<T>* m22)
 {
-    //bogus; cannot compile;
+    U size = m11->get_nRows();
+
+    if (size != m11->get_nCols())
+    {
+        printf("assemble(): m11 is not square\n");
+        return nullptr;
+    }
 
     for (const auto& m : { m12, m21, m22 })
     {
-        if (m11->get_nRows() != m->get_nRows())
-            printf("row mismatch\n");
-
-        if (m11->get_nCols() != m->get_nCols())
-            printf("col mismatch\n");
+        if ((size != m->get_nRows()) || (size != m->get_nCols()))
+        {
+            printf("assemble(): size mismatch\n");
+            return nullptr;
+        }
     }
 
-    return nullptr;
+    Matrix<T>* C = new Matrix<T>(size * 2, size * 2);
+    C->copy_block(m11, size);
+    C->copy_block(m12, size, 0, size);
+    C->copy_block(m21, size, size, 0);
+    C->copy_block(m22, size, size, size);
+    return C;
 }
 

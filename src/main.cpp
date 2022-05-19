@@ -151,26 +151,22 @@ void test_multiply_blocks()
 template<typename T>
 void test_assemble()
 {
-    U AR1 = AR + 3;
+    U AR1 = AR + 1;
 
-    Matrix<T>* s1 = new Matrix<T>(AR1, AR1);
+    auto s1 = new Matrix<T>(AR1, AR1);
     s1->set_to_random(LB, UB, nDiscards << 3);
-    s1->display("s1");
+    s1->display("s1", true);
 
-    Matrix<T>* s2 = new Matrix<T>(AR1+1, AR1);
+    auto s2 = new Matrix<T>(AR1, AR1);
     s2->set_to_random(LB, UB, nDiscards << 4);
-    s2->display("s2");
+    s2->display("s2", true);
 
-    Matrix<T>* s3 = new Matrix<T>(AR1, AR1-1);
-    s3->set_to_random(LB, UB, nDiscards << 4);
-    s3->display("s3");
+    auto s3 = new Matrix<T>(AR1, AR1);
+    s3->set_to_random(LB, UB, nDiscards << 5);
+    s3->display("s3", true);
 
-    auto p1 = assemble<T>(s1, s1, s3, s1);
-    printf("first assemble\n");
-
-    auto p2 = assemble<T>(s1, s1, s1, s2);
-    printf("second assemble\n");
-
+    auto r1 = assemble<T>(s1, s2, s3, s1);
+    r1->display("r1", true);
 }
 
 int main(int argc, char* argv[])

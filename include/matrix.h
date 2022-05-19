@@ -16,10 +16,18 @@ In client code (main.cpp), we never use the names A, B, and C.
 
 ------------------------------------------------------------------------
 
+Block:
+A `block`, unless otherwise specified, means a square block within a matrix.
+Its number of rows/columns is often denoted by `size`.
+The indices of the top-left cell of a blockk often have the prefixes
+`init_row_` and `init_col_`.
+
+------------------------------------------------------------------------
+
 Methods:
 
-* operations that modify the whole of A
-  - they have the prefix `set_to_`.
+* operations that modify A->data
+  - they often have the prefix `set_to_`.
   - they modify `data` in-place.
   - they do *not* modify `nRows` or `nCols`.
 
@@ -67,7 +75,7 @@ public:
     T* get_data() const { return data; }
     // We don't want, and we don't need, set_data().
 
-    // --------------- methods that modify the whole of A --------------- //
+    // --------------- methods that modify A->data --------------- //
     // Set each element of A to a random value.
     void set_to_random(int lower, int upper, U nDiscards);
 
@@ -85,6 +93,10 @@ public:
 
     // Copy data from B into A.
     void set_to_copy(const Matrix<T>* B);
+
+    // Copy data from the specified block of B into the specified block of A.
+    void copy_block(const Matrix<T>* B, U size,
+        U init_row_A = 0, U init_col_A = 0, U init_row_B = 0, U init_col_B = 0);
 
     // ---------------- methods that do not modify A ---------------- //
     // Display some info about A.
