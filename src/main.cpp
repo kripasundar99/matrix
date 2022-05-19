@@ -38,12 +38,14 @@ void Process_ARGV(int argc, char* argv[])
 
 
 template<typename T>
-void test_equals(Matrix<T>* m1, Matrix<T>* m2, string s1, string s2)
+void test_equals(Matrix<T>* m1, Matrix<T>* m2, string s1, string s2,
+    double tolerance = 0)
 {
-    printf("%s %s %s\n----\n",
+    printf("%s %s %s, with tolerance %f\n----\n",
         s1.c_str(),
-        (m1->equals(m2) ? "equals" : "does not equal"),
-        s2.c_str());
+        (m1->equals(m2, tolerance) ? "equals" : "does not equal"),
+        s2.c_str(),
+        tolerance);
 }
 
 template<typename T>
@@ -189,6 +191,8 @@ void test_NBB_multiply()
     p2->display("p2", true);
 
     test_equals(p1, p2, "p1", "p2");
+
+    test_equals(p1, p2, "p1", "p2", 0.000001);
 }
 
 int main(int argc, char* argv[])

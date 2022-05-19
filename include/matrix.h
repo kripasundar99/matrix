@@ -43,7 +43,7 @@ Methods:
 #include <stdexcept>
 #include <string>
 
-#define DEBUG_LEVEL 1
+#define DEBUG_LEVEL 0
 #define DPRINTF(_level) if (DEBUG_LEVEL >= (_level)) printf
 
 using namespace std;
@@ -108,8 +108,9 @@ public:
     // i.e., if their row counts match and their column counts match.
     bool dimensions_match(const Matrix<T>* B) const;
 
-    // return A == B
-    bool equals(const Matrix<T>* B) const;
+    // return A == B, within specified tolerance
+    // Note: see related TODO in matrix.cpp .
+    bool equals(const Matrix<T>* B, double tolerance = 0) const;
 
     // return -A
     Matrix<T>* get_negative() const;

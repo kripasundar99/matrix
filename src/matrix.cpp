@@ -241,11 +241,20 @@ template<> inline const char* GFS_equals2<double>()
     return "a = m1[%d][%d] = %40.40f; b = m2[%d][%d] = %40.40f; a - b = %40.40f\n";
 }
 
-
-
-
+// TODO:
+// Review this design decision!
+//
+// Currently, `tolerance` is always a double, irrespective of `T`.
+//
+// Arguably:
+// * if `T` is `int`, then we should not support non-zero `tolerance`.
+// * if `T` is `float` or `double`, `tolerance` should be a double.
+//
+// Separate topic:
+// What I really want is an *unsigned* double.  But C++ doesn't have native
+// support for that.
 template<typename T>
-bool Matrix<T>::equals(const Matrix<T>* B) const
+bool Matrix<T>::equals(const Matrix<T>* B, double tolerance /* = 0 */) const
 {
     if (!dimensions_match(B))
         return false;
@@ -259,7 +268,7 @@ bool Matrix<T>::equals(const Matrix<T>* B) const
 
             DPRINTF(1)(GFS_equals1<T>(), i, j, a, b, a - b);
 
-            if (a != b)
+            if (abs(a - b) > tolerance)
             {
                 DPRINTF(1)(GFS_equals2<T>(), i, j, a, i, j, b, a - b);
                 return false;
