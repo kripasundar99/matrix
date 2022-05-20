@@ -1,5 +1,8 @@
 #include "matrix.h"
 
+using Mx_int = Matrix<int>;
+using Mx_dbl = Matrix<double>;
+
 // Explicit template instantiation as advised at
 // https://stackoverflow.com/questions/115703/storing-c-template-function-definitions-in-a-cpp-file .
 // This allows us to define the method templates here in this .cpp,
@@ -7,17 +10,11 @@
 template class Matrix<int>;
 template class Matrix<double>;
 
-using M_int = Matrix<int>;
-using M_dbl = Matrix<double>;
-
-// Yet another experiment
+// Explicit template instantiation.
 template
-Matrix<int>* assemble(Matrix<int>* m11, Matrix<int>* m12,
-    Matrix<int>* m21, Matrix<int>* m22);
-
+Mx_int* assemble(Mx_int* m11, Mx_int* m12, Mx_int* m21, Mx_int* m22);
 template
-Matrix<double>* assemble(Matrix<double>* m11, Matrix<double>* m12,
-    Matrix<double>* m21, Matrix<double>* m22);
+Mx_dbl* assemble(Mx_dbl* m11, Mx_dbl* m12, Mx_dbl* m21, Mx_dbl* m22);
 
 // ----------------------------------------------------
 
@@ -73,13 +70,13 @@ static U get_num_discards()
 // https://www.cplusplus.com/reference/random/
 // FYI: distribution(generator) generates a number in the range lower..upper
 template<>
-void Matrix<int>::set_to_random(int lower, int upper)
+void Mx_int::set_to_random(int lower, int upper)
 {
     std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution(lower, upper);
 
-    U nDiscards = get_num_discards();
     // discard the first few generated items
+    U nDiscards = get_num_discards();
     for (U i = 0; i < nDiscards; i++)
         distribution(generator);
 
@@ -89,13 +86,13 @@ void Matrix<int>::set_to_random(int lower, int upper)
 }
 
 template<>
-void Matrix<double>::set_to_random(int lower, int upper)
+void Mx_dbl::set_to_random(int lower, int upper)
 {
     std::default_random_engine generator;
     std::uniform_real_distribution<double> distribution(lower, upper);
 
-    U nDiscards = get_num_discards();
     // discard the first few generated items
+    U nDiscards = get_num_discards();
     for (U i = 0; i < nDiscards; i++)
         distribution(generator);
 

@@ -79,11 +79,6 @@ void test_basic_ops()
 
     m1->add(m1a)->display("m1+m1a");
 
-    /*
-    DPRINTF(0)("EARLY EXIT!!!");
-    return;
-    */
-
     Matrix<T>* m2 = new Matrix<T>(BR, BC);
     m2->set_to_random(LB, UB);
     m2->display("m2");
@@ -140,7 +135,8 @@ void test_multiply_blocks()
     test_equals(s1->multiply_blocks(s2, AR1), s1->multiply(s2),
         "multiply_blocks(AR1)", "multiply()");
 
-    s1->multiply_blocks(s2, AR, 1, 2, 2, 1)->display("multiply_blocks(AR,1,2,2,1)", true);
+    s1->multiply_blocks(s2, AR, 1, 2, 2, 1)
+        ->display("multiply_blocks(AR,1,2,2,1)", true);
 }
 
 template<typename T>
