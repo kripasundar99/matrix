@@ -77,7 +77,7 @@ public:
 
     // --------------- methods that modify A->data --------------- //
     // Set each element of A to a random value.
-    void set_to_random(int lower, int upper, U nDiscards);
+    void set_to_random(int lower, int upper);
 
     // Set A to zero matrix of existing dimensions.  Need not be square.
     void set_to_zero();

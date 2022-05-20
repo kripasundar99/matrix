@@ -1,8 +1,11 @@
 # executables
-matrix
+bin/matrix
 
 # vscode
-.vscode
+.vscode/
 
 # vim swap files
 .*.sw*
+
+# temp dir
+tmp/

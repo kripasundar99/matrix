@@ -49,16 +49,36 @@ void Matrix<T>::construct(U nr, U nc)
 
 // ----------------------------------------------------
 
+static U get_num_discards()
+{
+    static U num_discards = 0;
+    static U step_up = 20;
+
+    // If we used zero discards, or the same discard count each time, the
+    // contents of each matrix would start off at the same location in the
+    // pseudo-random sequence.
+    // e.g.: 7, 3, 5, 2, 4, 9, 8, 6, 1, 0, 3, 2, ...
+    // m1 = [ 7 3 5 | 2 4 9 | 8 6 1 ]
+    // m2 = [ 7 3 | 5 2 | 4 9 ]
+
+    // To prevent this, each time we call get_num_discards(), we step up the
+    // number of items we are going to discard.
+
+    num_discards += step_up;
+    return num_discards;
+}
+
 // Set each element of A to a random value.
 // Adapt the randomisation logic from
 // https://www.cplusplus.com/reference/random/
 // FYI: distribution(generator) generates a number in the range lower..upper
 template<>
-void Matrix<int>::set_to_random(int lower, int upper, U nDiscards)
+void Matrix<int>::set_to_random(int lower, int upper)
 {
     std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution(lower, upper);
 
+    U nDiscards = get_num_discards();
     // discard the first few generated items
     for (U i = 0; i < nDiscards; i++)
         distribution(generator);
@@ -69,11 +89,12 @@ void Matrix<int>::set_to_random(int lower, int upper, U nDiscards)
 }
 
 template<>
-void Matrix<double>::set_to_random(int lower, int upper, U nDiscards)
+void Matrix<double>::set_to_random(int lower, int upper)
 {
     std::default_random_engine generator;
     std::uniform_real_distribution<double> distribution(lower, upper);
 
+    U nDiscards = get_num_discards();
     // discard the first few generated items
     for (U i = 0; i < nDiscards; i++)
         distribution(generator);

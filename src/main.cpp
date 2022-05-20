@@ -7,7 +7,6 @@ U BC = 4;   // number of cols in B
 
 // settings for matrix contents
 int LB = -8;        // lower bound for data entries
-U nDiscards = 100;  // number of discards, for randomisation
 
 // do not modify: derived values
 U BR = AC;      // do not modify: number of rows in B == number of cols in A
@@ -52,7 +51,7 @@ template<typename T>
 void test_basic_ops()
 {
     Matrix<T>* m1 = new Matrix<T>(AR, AC);
-    m1->set_to_random(LB, UB, nDiscards);
+    m1->set_to_random(LB, UB);
     m1->display("m1");
 
     Matrix<T>* m1a = new Matrix<T>(1,1);
@@ -86,13 +85,7 @@ void test_basic_ops()
     */
 
     Matrix<T>* m2 = new Matrix<T>(BR, BC);
-    // Do not use the same discard count for m1 and m2.
-    // If you do, m1 and m2 will start off at the same location in the
-    // pseudo-random sequence.
-    // e.g.: 7, 3, 5, 2, ...
-    // m1 = [ 7 3 5 | 2 4 9 | 8 6 1 ]
-    // m2 = [ 7 3 | 5 2 | 4 9 ]
-    m2->set_to_random(LB, UB, nDiscards << 1);
+    m2->set_to_random(LB, UB);
     m2->display("m2");
 
     test_equals(m1, m2, "m1", "m2");
@@ -110,7 +103,7 @@ void test_basic_ops()
     test_equals(m3, m4->get_negative(), "m3", "negative m4");
 
     Matrix<T>* m5 = new Matrix<T>(AR+2);
-    m5->set_to_random(LB, UB, nDiscards << 2);
+    m5->set_to_random(LB, UB);
     m5->display("m5 AR+2");
 
     m5->multiply(m5)->display("m5^2");
@@ -137,11 +130,11 @@ void test_multiply_blocks()
     U AR1 = AR + 3;
 
     Matrix<T>* s1 = new Matrix<T>(AR1, AR1);
-    s1->set_to_random(LB, UB, nDiscards << 3);
+    s1->set_to_random(LB, UB);
     s1->display("s1");
 
     Matrix<T>* s2 = new Matrix<T>(AR1, AR1);
-    s2->set_to_random(LB, UB, nDiscards << 4);
+    s2->set_to_random(LB, UB);
     s2->display("s2");
 
     test_equals(s1->multiply_blocks(s2, AR1), s1->multiply(s2),
@@ -156,18 +149,22 @@ void test_assemble()
     U AR1 = AR + 1;
 
     auto s1 = new Matrix<T>(AR1, AR1);
-    s1->set_to_random(LB, UB, nDiscards << 3);
+    s1->set_to_random(LB, UB);
     s1->display("s1", true);
 
     auto s2 = new Matrix<T>(AR1, AR1);
-    s2->set_to_random(LB, UB, nDiscards << 4);
+    s2->set_to_random(LB, UB);
     s2->display("s2", true);
 
     auto s3 = new Matrix<T>(AR1, AR1);
-    s3->set_to_random(LB, UB, nDiscards << 5);
+    s3->set_to_random(LB, UB);
     s3->display("s3", true);
 
-    auto r1 = assemble<T>(s1, s2, s3, s1);
+    auto s4 = new Matrix<T>(AR1, AR1);
+    s4->set_to_random(LB, UB);
+    s4->display("s4", true);
+
+    auto r1 = assemble<T>(s1, s2, s3, s4);
     r1->display("r1", true);
 }
 
@@ -177,11 +174,11 @@ void test_NBB_multiply()
     U AR1 = 4; // need power of 2
 
     auto s1 = new Matrix<T>(AR1, AR1);
-    s1->set_to_random(LB, UB, nDiscards << 6);
+    s1->set_to_random(LB, UB);
     s1->display("s1", true);
 
     auto s2 = new Matrix<T>(AR1, AR1);
-    s2->set_to_random(LB, UB, nDiscards << 7);
+    s2->set_to_random(LB, UB);
     s2->display("s2", true);
 
     auto p1 = s1->multiply(s2);
