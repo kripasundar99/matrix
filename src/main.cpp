@@ -40,11 +40,17 @@ template<typename T>
 void test_equals(Matrix<T>* m1, Matrix<T>* m2, string s1, string s2,
     double tolerance = 0)
 {
-    printf("%s %s %s, with tolerance %f\n----\n",
-        s1.c_str(),
-        (m1->equals(m2, tolerance) ? "equals" : "does not equal"),
-        s2.c_str(),
-        tolerance);
+    bool cmp_status = m1->equals(m2, tolerance);
+    const char* cmp_status_msg = (cmp_status ? "equals" : "does not equal");
+
+    char tolerance_msg[512] = {};
+    if (tolerance > 0)
+    {
+        sprintf(tolerance_msg, ", with tolerance %f", tolerance);
+    }
+
+    printf("%s %s %s%s\n----\n", s1.c_str(), cmp_status_msg, s2.c_str(),
+        tolerance_msg);
 }
 
 template<typename T>
