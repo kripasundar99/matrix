@@ -200,7 +200,7 @@ void Matrix<T>::set_to_copy(const Matrix<T>* B)
 // ----------------------------------------------------
 
 template<typename T>
-void Matrix<T>::copy_block(const Matrix<T>* B, U size,
+void Matrix<T>::set_block_to_copy(const Matrix<T>* B, U size,
     U init_row_A /* = 0 */, U init_col_A /* = 0 */,
     U init_row_B /* = 0 */, U init_col_B /* = 0 */)
 {
@@ -575,10 +575,10 @@ Matrix<T>* assemble(Matrix<T>* m11, Matrix<T>* m12,
     }
 
     Matrix<T>* C = new Matrix<T>(size * 2, size * 2);
-    C->copy_block(m11, size);
-    C->copy_block(m12, size, 0, size);
-    C->copy_block(m21, size, size, 0);
-    C->copy_block(m22, size, size, size);
+    C->set_block_to_copy(m11, size);
+    C->set_block_to_copy(m12, size, 0, size);
+    C->set_block_to_copy(m21, size, size, 0);
+    C->set_block_to_copy(m22, size, size, size);
     return C;
 }
 

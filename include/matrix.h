@@ -95,7 +95,7 @@ public:
     void set_to_copy(const Matrix<T>* B);
 
     // Copy data from the specified block of B into the specified block of A.
-    void copy_block(const Matrix<T>* B, U size,
+    void set_block_to_copy(const Matrix<T>* B, U size,
         U init_row_A = 0, U init_col_A = 0, U init_row_B = 0, U init_col_B = 0);
 
     // ---------------- methods that do not modify A ---------------- //
