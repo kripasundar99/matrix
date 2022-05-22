@@ -538,7 +538,6 @@ Matrix<T>* Matrix<T>::naive_block_based_multiply(const Matrix<T>* B) const
     return assemble(C11, C12, C21, C22);
 }
 
-
 // ----------------------------------------------------
 
 /*

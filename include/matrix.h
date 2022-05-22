@@ -27,7 +27,7 @@ The indices of the top-left cell of a blockk often have the prefixes
 Methods:
 
 * operations that modify A->data
-  - they often have the prefix `set_to_`.
+  - they often have the prefix `set_to_` or `set_block_to_`.
   - they modify `data` in-place.
   - they do *not* modify `nRows` or `nCols`.
 
@@ -104,24 +104,26 @@ public:
     // contents of the matrix.
     void display(string label = "Matrix", bool always_show_data = false) const;
 
-    // return true if A and B have identical dimensions
+    // Return true if A and B have identical dimensions.
     // i.e., if their row counts match and their column counts match.
     bool dimensions_match(const Matrix<T>* B) const;
 
-    // return A == B, within specified tolerance
+    // Return A == B, within specified tolerance.
     // Note: see related TODO in matrix.cpp .
     bool equals(const Matrix<T>* B, double tolerance = 0) const;
 
-    // return -A
+    // Return -A
     Matrix<T>* get_negative() const;
 
-    // return A + B
+    // Return A + B
     Matrix<T>* add(const Matrix<T>* B) const;
 
-    // return A - B
+    // Return A - B
     Matrix<T>* subtract(const Matrix<T>* B) const;
 
     // Multiply two square blocks (sub-matrices) of A and B.
+    // Return the product.
+    //
     // The top-left cell is at [init_row][init_col].
     // The bottom-right cell is at [init_row + size - 1][init_col + size - 1].
     // Return the result as a square matrix.
@@ -132,10 +134,10 @@ public:
         U init_row_A = 0, U init_col_A = 0, U init_row_B = 0, U init_col_B = 0)
         const;
 
-    // return A * B
+    // Return A * B
     Matrix<T>* multiply(const Matrix<T>* B) const;
 
-    // return A * B, calculated using a naive block-based algorithm.
+    // Return A * B, calculated using a naive block-based algorithm.
     Matrix<T>* naive_block_based_multiply(const Matrix<T>* B) const;
 
 private:
