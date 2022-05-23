@@ -2,7 +2,7 @@
 
 /*
 
-Terminology and conventions
+Terminology and conventions:
 
 ------------------------------------------------------------------------
 
@@ -21,6 +21,13 @@ A `block`, unless otherwise specified, means a square block within a matrix.
 Its number of rows/columns is often denoted by `size`.
 The indices of the top-left cell of a blockk often have the prefixes
 `init_row_` and `init_col_`.
+
+The top-left cell of the block is at [init_row_X][init_col_X].
+The bottom-right cell is at [init_row_X + size - 1][init_col_X + size - 1].
+
+Inside comment blocks, the notation `block{X}` refers to the specific block of
+matrix `X` selected by the local variables `size`, `init_row_X`, `init_col_X`.
+It is, of course, not meaningful to C++.
 
 ------------------------------------------------------------------------
 
@@ -71,7 +78,7 @@ public:
     T get_IJ(U i, U j) const { return data[i * nCols + j]; }
     void set_IJ(U i, U j, T value) const { data[i * nCols + j] = value; }
 
-    // Get direct access to the data block.
+    // Get direct access to `A->data`.
     T* get_data() const { return data; }
     // We don't want, and we don't need, set_data().
 
@@ -112,22 +119,30 @@ public:
     // Note: see related TODO in matrix.cpp .
     bool equals(const Matrix<T>* B, double tolerance = 0) const;
 
-    // Return -A
+    // Return -A.
     Matrix<T>* get_negative() const;
 
-    // Return A + B
+    // Return block{A} + block{B}.
+    // For two n-by-n matrices A and B:
+    // add_blocks(B, n, 0, 0, 0, 0) == add_blocks(B, n) == add(B).
+    Matrix<T>* add_blocks(const Matrix<T>* B, U size,
+        U init_row_A = 0, U init_col_A = 0, U init_row_B = 0, U init_col_B = 0)
+        const;
+
+    // Return A + B.
     Matrix<T>* add(const Matrix<T>* B) const;
 
-    // Return A - B
+    // Return block{A} - block{B}.
+    // For two n-by-n matrices A and B:
+    // subtract_blocks(B, n, 0, 0, 0, 0) == subtract_blocks(B, n) == subtract(B).
+    Matrix<T>* subtract_blocks(const Matrix<T>* B, U size,
+        U init_row_A = 0, U init_col_A = 0, U init_row_B = 0, U init_col_B = 0)
+        const;
+
+    // Return A - B.
     Matrix<T>* subtract(const Matrix<T>* B) const;
 
-    // Multiply two square blocks (sub-matrices) of A and B.
-    // Return the product.
-    //
-    // The top-left cell is at [init_row][init_col].
-    // The bottom-right cell is at [init_row + size - 1][init_col + size - 1].
-    // Return the result as a square matrix.
-    //
+    // Return block{A} * block{B}.
     // For two n-by-n matrices A and B:
     // multiply_blocks(B, n, 0, 0, 0, 0) == multiply_blocks(B, n) == multiply(B).
     Matrix<T>* multiply_blocks(const Matrix<T>* B, U size,
@@ -159,7 +174,11 @@ private:
     // helper for constructors
     void construct(U nr, U nc);
 
-    // helper for add/subtract
+    // helpers for add/subtract
+    Matrix<T>* helper_for_add_sub_blocks(bool isAddition,
+        const Matrix<T>* B, U size,
+        U init_row_A = 0, U init_col_A = 0, U init_row_B = 0, U init_col_B = 0)
+        const;
     Matrix<T>* helper_for_add_sub(bool isAddition, const Matrix<T>* B) const;
 };
 

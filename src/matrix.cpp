@@ -324,6 +324,75 @@ Matrix<T>* Matrix<T>::get_negative() const
 // ----------------------------------------------------
 
 template<typename T>
+Matrix<T>* Matrix<T>::helper_for_add_sub_blocks(bool isAddition,
+    const Matrix<T>* B, U size,
+    U init_row_A /* = 0 */, U init_col_A /* = 0 */,
+    U init_row_B /* = 0 */, U init_col_B /* = 0 */) const
+{
+    try
+    {
+        U AR = nRows;
+        U AC = nCols;
+        U BR = B->get_nRows();
+        U BC = B->get_nCols();
+
+        if ((AR < (init_row_A + size)) || (AC < (init_col_A + size)) ||
+            (BR < (init_row_B + size)) || (BC < (init_col_B + size)))
+        {
+            string msg =
+                (string(isAddition ? "add" : "sub")
+                    + string("_blocks(): sub-matrix doesn't fit"));
+            throw std::invalid_argument(msg);
+        }
+
+        Matrix<T>* C = new Matrix<T>(size, size);
+
+        for (U i = 0; i < size; i++)
+        {
+            for (U j = 0; j < size; j++)
+            {
+                T a = get_IJ(init_row_A + i, init_col_A + j);
+                T b = B->get_IJ(init_row_B + i, init_col_B + j);
+                T sum = (isAddition ? (a + b) : (a - b));
+                C->set_IJ(i, j, sum);
+            }
+        }
+
+        return C;
+    }
+    catch(std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << "\n";
+        return nullptr;
+    }
+    catch(...)
+    {
+        std::cerr << "Error: Unknown problem\n";
+        return nullptr;
+    }
+}
+
+template<typename T>
+Matrix<T>* Matrix<T>::add_blocks(const Matrix<T>* B, U size,
+    U init_row_A /* = 0 */, U init_col_A /* = 0 */,
+    U init_row_B /* = 0 */, U init_col_B /* = 0 */) const
+{
+    return helper_for_add_sub_blocks(true, B, size,
+        init_row_A, init_col_A, init_row_B, init_col_B);
+}
+
+template<typename T>
+Matrix<T>* Matrix<T>::subtract_blocks(const Matrix<T>* B, U size,
+    U init_row_A /* = 0 */, U init_col_A /* = 0 */,
+    U init_row_B /* = 0 */, U init_col_B /* = 0 */) const
+{
+    return helper_for_add_sub_blocks(false, B, size,
+        init_row_A, init_col_A, init_row_B, init_col_B);
+}
+
+// ----------------------------------------------------
+
+template<typename T>
 Matrix<T>* Matrix<T>::helper_for_add_sub(bool isAddition, const Matrix<T>* B) const
 {
     try
@@ -504,6 +573,8 @@ bool is_power_of_2(U n)
     return (n && !(n & (n - 1)));
 }
 
+// Source for this simple block-based divide-and-conquer multiply:
+// https://en.wikipedia.org/wiki/Strassen_algorithm
 template<typename T>
 Matrix<T>* Matrix<T>::BB_multiply(const Matrix<T>* B) const
 {
@@ -515,9 +586,6 @@ Matrix<T>* Matrix<T>::BB_multiply(const Matrix<T>* B) const
     assert(is_power_of_2(size));
 
     U s2 = size / 2;
-
-    // Source for this naive block-based multiply:
-    // https://en.wikipedia.org/wiki/Strassen_algorithm
 
     auto A11B11 = multiply_blocks(B, s2);
     auto A12B21 = multiply_blocks(B, s2, 0, s2, s2, 0);
@@ -541,10 +609,12 @@ Matrix<T>* Matrix<T>::BB_multiply(const Matrix<T>* B) const
 // ----------------------------------------------------
 
 /*
+// Source for this Strassen-based multiply:
+// https://en.wikipedia.org/wiki/Strassen_algorithm
 template<typename T>
-Matrix<T>* Matrix<T>::Strassen_multiply(const Matrix<T>* B) const
+Matrix<T>* Matrix<T>::SB_multiply(const Matrix<T>* B) const
 {
-    assert(0);
+    assert(0 && "NYI - SB_multiply!!!!");
     return nullptr;
 }
 */

@@ -126,17 +126,29 @@ void test_basic_ops()
 
 
 template<typename T>
-void test_multiply_blocks()
+void test_basic_ops_blocks()
 {
     U AR1 = AR + 3;
 
     Matrix<T>* s1 = new Matrix<T>(AR1, AR1);
     s1->set_to_random(LB, UB);
-    s1->display("s1");
+    s1->display("s1", true);
 
     Matrix<T>* s2 = new Matrix<T>(AR1, AR1);
     s2->set_to_random(LB, UB);
-    s2->display("s2");
+    s2->display("s2", true);
+
+    test_equals(s1->add_blocks(s2, AR1), s1->add(s2),
+        "add_blocks(AR1)", "add()");
+
+    s1->add_blocks(s2, AR, 1, 2, 2, 1)
+        ->display("add_blocks(AR,1,2,2,1)", true);
+
+    test_equals(s1->subtract_blocks(s2, AR1), s1->subtract(s2),
+        "subtract_blocks(AR1)", "subtract()");
+
+    s1->subtract_blocks(s2, AR, 1, 2, 2, 1)
+        ->display("subtract_blocks(AR,1,2,2,1)", true);
 
     test_equals(s1->multiply_blocks(s2, AR1), s1->TB_multiply(s2),
         "multiply_blocks(AR1)", "TB_multiply()");
@@ -200,15 +212,15 @@ int main(int argc, char* argv[])
 
     // no need to test `int` for a while
     //test_basic_ops<int>();
-    //test_multiply_blocks<int>();
+    //test_basic_ops_blocks<int>();
+    //test_BB_multiply<int>();
 
     //test_basic_ops<double>();
-    //test_multiply_blocks<double>();
+    test_basic_ops_blocks<double>();
 
     //test_assemble<double>();
 
-    //test_BB_multiply<int>();
-    test_BB_multiply<double>();
+    //test_BB_multiply<double>();
 
     return 0;
 }
