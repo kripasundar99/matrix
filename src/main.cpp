@@ -91,11 +91,11 @@ void test_basic_ops()
 
     test_equals(m1, m2, "m1", "m2");
 
-    Matrix<T>* m3 = m1->multiply(m2);
+    Matrix<T>* m3 = m1->TB_multiply(m2);
     if (m3 != nullptr)
         m3->display("m3");
 
-    Matrix<T>* m4 = m1a->multiply(m2);
+    Matrix<T>* m4 = m1a->TB_multiply(m2);
     if (m4 != nullptr)
         m4->display("m4");
 
@@ -107,7 +107,7 @@ void test_basic_ops()
     m5->set_to_random(LB, UB);
     m5->display("m5 AR+2");
 
-    m5->multiply(m5)->display("m5^2");
+    m5->TB_multiply(m5)->display("m5^2");
 
     Matrix<T>* m6 = new Matrix<T>(AR, AC);
     m6->set_to_identity();
@@ -138,8 +138,8 @@ void test_multiply_blocks()
     s2->set_to_random(LB, UB);
     s2->display("s2");
 
-    test_equals(s1->multiply_blocks(s2, AR1), s1->multiply(s2),
-        "multiply_blocks(AR1)", "multiply()");
+    test_equals(s1->multiply_blocks(s2, AR1), s1->TB_multiply(s2),
+        "multiply_blocks(AR1)", "TB_multiply()");
 
     s1->multiply_blocks(s2, AR, 1, 2, 2, 1)
         ->display("multiply_blocks(AR,1,2,2,1)", true);
@@ -171,7 +171,7 @@ void test_assemble()
 }
 
 template<typename T>
-void test_NBB_multiply()
+void test_BB_multiply()
 {
     U AR1 = 4; // need power of 2
 
@@ -183,10 +183,10 @@ void test_NBB_multiply()
     s2->set_to_random(LB, UB);
     s2->display("s2", true);
 
-    auto p1 = s1->multiply(s2);
+    auto p1 = s1->TB_multiply(s2);
     p1->display("p1", true);
 
-    auto p2 = s1->naive_block_based_multiply(s2);
+    auto p2 = s1->BB_multiply(s2);
     p2->display("p2", true);
 
     test_equals(p1, p2, "p1", "p2");
@@ -207,8 +207,8 @@ int main(int argc, char* argv[])
 
     //test_assemble<double>();
 
-    //test_NBB_multiply<int>();
-    test_NBB_multiply<double>();
+    //test_BB_multiply<int>();
+    test_BB_multiply<double>();
 
     return 0;
 }

@@ -265,7 +265,7 @@ template<> inline const char* GFS_equals2<double>()
 // Currently, `tolerance` is always a double, irrespective of `T`.
 //
 // Arguably:
-// * if `T` is `int`, then we should not support non-zero `tolerance`.
+// * if `T` is `int`, then we should assert that `tolerance` is zero.
 // * if `T` is `float` or `double`, `tolerance` should be a double.
 //
 // Separate topic:
@@ -402,7 +402,7 @@ Matrix<T>* Matrix<T>::multiply_blocks(const Matrix<T>* B, U size,
 
         if ((AR < (init_row_A + size)) || (AC < (init_col_A + size)) ||
             (BR < (init_row_B + size)) || (BC < (init_col_B + size)))
-            throw std::invalid_argument( "multiply(): sub-matrix doesn't fit" );
+            throw std::invalid_argument( "multiply_blocks(): sub-matrix doesn't fit" );
 
         Matrix<T>* C = new Matrix<T>(size, size);
 
@@ -447,7 +447,7 @@ Matrix<T>* Matrix<T>::multiply_blocks(const Matrix<T>* B, U size,
 // ----------------------------------------------------
 
 template<typename T>
-Matrix<T>* Matrix<T>::multiply(const Matrix<T>* B) const
+Matrix<T>* Matrix<T>::TB_multiply(const Matrix<T>* B) const
 {
     try
     {
@@ -457,7 +457,7 @@ Matrix<T>* Matrix<T>::multiply(const Matrix<T>* B) const
         U BC = B->get_nCols();
 
         if (AC != BR)
-            throw std::invalid_argument( "multiply(): dimension mismatch" );
+            throw std::invalid_argument( "TB_multiply(): dimension mismatch" );
 
         Matrix<T>* C = new Matrix<T>(AR, BC);
 
@@ -505,7 +505,7 @@ bool is_power_of_2(U n)
 }
 
 template<typename T>
-Matrix<T>* Matrix<T>::naive_block_based_multiply(const Matrix<T>* B) const
+Matrix<T>* Matrix<T>::BB_multiply(const Matrix<T>* B) const
 {
     U size = get_nRows();
     assert(size == get_nCols());

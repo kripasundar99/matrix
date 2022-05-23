@@ -134,11 +134,22 @@ public:
         U init_row_A = 0, U init_col_A = 0, U init_row_B = 0, U init_col_B = 0)
         const;
 
-    // Return A * B
+    // Return A * B.
     Matrix<T>* multiply(const Matrix<T>* B) const;
 
-    // Return A * B, calculated using a naive block-based algorithm.
-    Matrix<T>* naive_block_based_multiply(const Matrix<T>* B) const;
+    // Textbook multiply:
+    // Return A * B, calculated using the straightforward
+    // textbook definition of matrix multiplication.
+    Matrix<T>* TB_multiply(const Matrix<T>* B) const;
+
+    // Block-based multiply:
+    // Return A * B, calculated using a simple block-based divide-and-conquer
+    // algorithm.
+    Matrix<T>* BB_multiply(const Matrix<T>* B) const;
+
+    // Strassen-based multiply:
+    // Return A * B, calculated using Strassen's algorithm.
+    Matrix<T>* SB_multiply(const Matrix<T>* B) const;
 
 private:
     U     nRows;    // number of rows in matrix
