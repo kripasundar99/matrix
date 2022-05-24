@@ -113,7 +113,7 @@ template<> inline const char* GFS_display<double>() { return "%8.2f%c"; }
 
 // display the matrix
 template<typename T>
-void Matrix<T>::display(string label /* = "Matrix" */,
+const Matrix<T>* Matrix<T>::display(string label /* = "{unknown matrix}" */,
     bool always_show_data /* = false */) const
 {
     printf("%s: %d x %d\n", label.c_str(), nRows, nCols);
@@ -128,6 +128,20 @@ void Matrix<T>::display(string label /* = "Matrix" */,
     }
 
     printf("----\n");
+
+    // For convenience, return `this`.
+    // This enables the idiom shown in code fragment F2 below.
+    //
+    // For better or worse, my desire for F2 makes me propagate the `const`
+    // property to the LHS.
+    //
+    // Specifically, f1 is a non-const pointer, while f2 is a const pointer.
+    // For now, I consider that a good thing.
+    //
+    // Code fragments:
+    // F1 = { auto f1 = multiply(B); }
+    // F2 = { auto f2 = multiply(B)->display("product"); }
+    return this;
 }
 
 

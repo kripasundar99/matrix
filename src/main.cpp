@@ -39,7 +39,7 @@ void Process_ARGV(int argc, char* argv[])
 }
 
 template<typename T>
-void test_equals(Matrix<T>* m1, Matrix<T>* m2, string s1, string s2,
+void test_equals(const Matrix<T>* m1, const Matrix<T>* m2, string s1, string s2,
     double tolerance = 0)
 {
     bool cmp_status = m1->equals(m2, tolerance);
@@ -229,11 +229,8 @@ void test_SB_multiply()
     s2->set_to_random(LB, UB);
     s2->display("s2", true);
 
-    auto p1 = s1->TB_multiply(s2);
-    p1->display("p1", true);
-
-    auto p2 = s1->SB_multiply(s2);
-    p2->display("p2", true);
+    auto p1 = s1->TB_multiply(s2)->display("p1", true);
+    auto p2 = s1->SB_multiply(s2)->display("p2", true);
 
     test_equals(p1, p2, "p1", "p2");
 

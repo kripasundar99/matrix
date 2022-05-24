@@ -109,7 +109,9 @@ public:
     // Display some info about A.
     // If always_show_data is set, or DEBUG_LEVEL is non-zero, show the
     // contents of the matrix.
-    void display(string label = "Matrix", bool always_show_data = false) const;
+    // For convenience, return `this`.  (See definition for details.)
+    const Matrix<T>* display(string label = "{unknown matrix}",
+        bool always_show_data = false) const;
 
     // Return true if A and B have identical dimensions.
     // i.e., if their row counts match and their column counts match.
