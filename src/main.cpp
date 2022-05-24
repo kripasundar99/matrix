@@ -6,11 +6,11 @@ U AC = 5;   // number of cols in A; also number of rows in B
 U BC = 4;   // number of cols in B
 
 // settings for matrix contents
-int LB = -8;        // lower bound for data entries
+int UB = 1; // upper bound for data entries
 
 // do not modify: derived values
-U BR = AC;      // do not modify: number of rows in B == number of cols in A
-int UB = -LB;   // do not modify: upper bound == - lower bound
+U BR = AC;      // do not edit: number of rows in B == number of cols in A
+int LB = -UB;   // do not edit: lower bound == -(upper bound)
 
 void Process_ARGV(int argc, char* argv[])
 {
@@ -19,22 +19,24 @@ void Process_ARGV(int argc, char* argv[])
     if (argc == 1)
         return;
 
-    if (!strcmp(argv[1], "-h") || (argc != 4))
+    if (!strcmp(argv[1], "-h") || (argc != 5))
     {
-        printf("Usage: %s [<AR> <AC|BR> <BC>]\n", argv[0]);
+        printf("Usage: %s [<AR> <AC|BR> <BC> <UB>]\n", argv[0]);
         exit(0);
     }
 
-    assert (argc == 4);
+    assert (argc == 5);
 
     AR = atoi(argv[1]);
     AC = atoi(argv[2]);
     BR = AC;
     BC = atoi(argv[3]);
 
+    UB = atoi(argv[4]);
+    LB = -UB;
+
     DPRINTF(1)("m1 needs to be %dx%d; m2 needs to be %dx%d\n", AR, AC, BR, BC);
 }
-
 
 template<typename T>
 void test_equals(Matrix<T>* m1, Matrix<T>* m2, string s1, string s2,
@@ -138,19 +140,27 @@ void test_basic_ops_blocks()
     s2->set_to_random(LB, UB);
     s2->display("s2", true);
 
-    test_equals(s1->add_blocks(s2, AR1), s1->add(s2),
+    Matrix<T>* p = nullptr;
+
+    p = s1->add_blocks(s2, AR1);
+    //p->display("add_blocks(AR1)", true);
+    test_equals(p, s1->add(s2),
         "add_blocks(AR1)", "add()");
 
     s1->add_blocks(s2, AR, 1, 2, 2, 1)
         ->display("add_blocks(AR,1,2,2,1)", true);
 
-    test_equals(s1->subtract_blocks(s2, AR1), s1->subtract(s2),
+    p = s1->subtract_blocks(s2, AR1);
+    //p->display("subtract_blocks(AR1)", true);
+    test_equals(p, s1->subtract(s2),
         "subtract_blocks(AR1)", "subtract()");
 
     s1->subtract_blocks(s2, AR, 1, 2, 2, 1)
         ->display("subtract_blocks(AR,1,2,2,1)", true);
 
-    test_equals(s1->multiply_blocks(s2, AR1), s1->TB_multiply(s2),
+    p = s1->multiply_blocks(s2, AR1);
+    //p->display("multiply_blocks(AR1)", true);
+    test_equals(p, s1->TB_multiply(s2),
         "multiply_blocks(AR1)", "TB_multiply()");
 
     s1->multiply_blocks(s2, AR, 1, 2, 2, 1)
@@ -206,21 +216,47 @@ void test_BB_multiply()
     test_equals(p1, p2, "p1", "p2", 0.000001);
 }
 
+template<typename T>
+void test_SB_multiply()
+{
+    U AR1 = 4; // need power of 2
+
+    auto s1 = new Matrix<T>(AR1, AR1);
+    s1->set_to_random(LB, UB);
+    s1->display("s1", true);
+
+    auto s2 = new Matrix<T>(AR1, AR1);
+    s2->set_to_random(LB, UB);
+    s2->display("s2", true);
+
+    auto p1 = s1->TB_multiply(s2);
+    p1->display("p1", true);
+
+    auto p2 = s1->SB_multiply(s2);
+    p2->display("p2", true);
+
+    test_equals(p1, p2, "p1", "p2");
+
+    test_equals(p1, p2, "p1", "p2", 0.000001);
+}
+
 int main(int argc, char* argv[])
 {
     Process_ARGV(argc, argv);
 
-    // no need to test `int` for a while
+    // test `int` operations
     //test_basic_ops<int>();
     //test_basic_ops_blocks<int>();
+    //test_assemble<int>();
     //test_BB_multiply<int>();
+    test_SB_multiply<int>();
 
+    // test `double` operations
     //test_basic_ops<double>();
-    test_basic_ops_blocks<double>();
-
+    //test_basic_ops_blocks<double>();
     //test_assemble<double>();
-
     //test_BB_multiply<double>();
+    //test_SB_multiply<double>();
 
     return 0;
 }

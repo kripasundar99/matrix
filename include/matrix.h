@@ -152,7 +152,7 @@ public:
     // Return A * B.
     Matrix<T>* multiply(const Matrix<T>* B) const;
 
-    // Textbook multiply:
+    // Textbook-based multiply:
     // Return A * B, calculated using the straightforward
     // textbook definition of matrix multiplication.
     Matrix<T>* TB_multiply(const Matrix<T>* B) const;

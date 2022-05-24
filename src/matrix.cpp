@@ -516,6 +516,14 @@ Matrix<T>* Matrix<T>::multiply_blocks(const Matrix<T>* B, U size,
 // ----------------------------------------------------
 
 template<typename T>
+Matrix<T>* Matrix<T>::multiply(const Matrix<T>* B) const
+{
+    return TB_multiply(B);
+}
+
+// ----------------------------------------------------
+
+template<typename T>
 Matrix<T>* Matrix<T>::TB_multiply(const Matrix<T>* B) const
 {
     try
@@ -608,16 +616,53 @@ Matrix<T>* Matrix<T>::BB_multiply(const Matrix<T>* B) const
 
 // ----------------------------------------------------
 
-/*
 // Source for this Strassen-based multiply:
 // https://en.wikipedia.org/wiki/Strassen_algorithm
 template<typename T>
 Matrix<T>* Matrix<T>::SB_multiply(const Matrix<T>* B) const
 {
-    assert(0 && "NYI - SB_multiply!!!!");
-    return nullptr;
+    U size = get_nRows();
+    assert(size == get_nCols());
+    assert(size == B->get_nRows());
+    assert(size == B->get_nCols());
+
+    assert(is_power_of_2(size));
+
+    U s2 = size / 2;
+
+    const auto A = this;
+
+    auto M1A = A->add_blocks(A, s2, 0, 0, s2, s2); // A11 + A22
+    auto M1B = B->add_blocks(B, s2, 0, 0, s2, s2); // B11 + B22
+    auto M1 = M1A->multiply(M1B);
+
+    auto M2A = A->add_blocks(A, s2, 0, s2, s2); // A21 + A22
+    auto M2 = M2A->multiply_blocks(B, s2); // M2A * B11
+
+    auto M3B = B->subtract_blocks(B, s2, 0, s2, s2, s2); // B12 - B22
+    auto M3 = A->multiply_blocks(M3B, s2); // A11 * M3B
+
+    auto M4B = B->subtract_blocks(B, s2, s2, 0, 0, 0); // B21 - B11
+    auto M4 = A->multiply_blocks(M3B, s2, s2, s2); // A22 * M4B
+
+    auto M5A = A->add_blocks(A, s2, 0, 0, 0, s2); // A11 + A12
+    auto M5 = M5A->multiply_blocks(B, s2, 0, 0, s2, s2); // M5A * B22
+
+    auto M6A = A->subtract_blocks(A, s2, s2, 0, 0, 0); // A21 - A11
+    auto M6B = B->add_blocks(B, s2, 0, 0, 0, s2); // B11 + B12
+    auto M6 = M6A->multiply(M6B);
+
+    auto M7A = A->subtract_blocks(A, s2, 0, s2, s2, s2); // A12 - A22
+    auto M7B = B->add_blocks(B, s2, s2, 0, s2, s2); // B21 + B22
+    auto M7 = M7A->multiply(M7B);
+
+    auto C11 = M1->add(M4)->subtract(M5)->add(M7);
+    auto C12 = M3->add(M5);
+    auto C21 = M2->add(M4);
+    auto C22 = M1->subtract(M2)->add(M3)->add(M6);
+
+    return assemble(C11, C12, C21, C22);
 }
-*/
 
 // ----------------------------------------------------
 
