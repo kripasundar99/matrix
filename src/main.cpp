@@ -5,12 +5,12 @@ U AR = 3;   // number of rows in A
 U AC = 5;   // number of cols in A; also number of rows in B
 U BC = 4;   // number of cols in B
 
-U Mult_AR = 8;  // needs to be a power of 2
+U MULT_AR = 8;  // needs to be a power of 2
 
 // settings for matrix contents
-int UB = 8; // upper bound for data entries
+int UB = 30; // upper bound for data entries
 
-// do not modify: derived values
+// do not modify: values derived from above variables
 U BR = AC;      // do not edit: number of rows in B == number of cols in A
 int LB = -UB;   // do not edit: lower bound == -(upper bound)
 
@@ -59,7 +59,7 @@ static void Process_ARGV(int argc, const char* argv[])
         Print_usage_and_exit(argv,
             "Incorrect argument: <XP> out of range");
 
-    Mult_AR = 1 << exponent;
+    MULT_AR = 1 << exponent;
 
     UB = atoi(argv[2]);
     if ((UB <= 0) || (UB > 1000))
@@ -70,7 +70,7 @@ static void Process_ARGV(int argc, const char* argv[])
 
     printf(
         "We will use 2**%d x 2**%d matrices,"
-        " with contents ranging from %d to %d.\n",
+        " with contents ranging from %d to %d.\n----\n",
         exponent, exponent, LB, UB);
 }
 
@@ -250,19 +250,19 @@ void test_assemble()
 template<typename T>
 void test_BB_multiply()
 {
-    auto m1 = new Matrix<T>(Mult_AR, Mult_AR);
-    m1->set_to_random(LB, UB);
-    m1->display("m1", true);
+    auto M1 = new Matrix<T>(MULT_AR, MULT_AR);
+    M1->set_to_random(LB, UB);
+    M1->display("M1", true);
 
-    auto m2 = new Matrix<T>(Mult_AR, Mult_AR);
-    m2->set_to_random(LB, UB);
-    m2->display("m2", true);
+    auto M2 = new Matrix<T>(MULT_AR, MULT_AR);
+    M2->set_to_random(LB, UB);
+    M2->display("M2", true);
 
-    auto p1 = m1->TB_multiply(m2)->display("p1 (textbook multiply)", true);
-    auto p2 = m1->BB_multiply(m2)->display("p2 (block-based multiply)", true);
+    auto P1 = M1->TB_multiply(M2)->display("P1 (Textbook M1 * M2)", true);
+    auto P2 = M1->BB_multiply(M2)->display("P2 (Block-based M1 * M2)", true);
 
-    test_equals(p1, p2,
-        "p1 (textbook multiply)", "p2 (block-based multiply)", 0.000001);
+    test_equals(P1, P2,
+        "P1 (Textbook M1 * M2)", "P2 (Block-based M1 * M2)", 0.000001);
 }
 
 // ----------------------------------------------------
@@ -270,19 +270,19 @@ void test_BB_multiply()
 template<typename T>
 void test_SB_multiply()
 {
-    auto m1 = new Matrix<T>(Mult_AR, Mult_AR);
-    m1->set_to_random(LB, UB);
-    m1->display("m1", true);
+    auto M1 = new Matrix<T>(MULT_AR, MULT_AR);
+    M1->set_to_random(LB, UB);
+    M1->display("M1", true);
 
-    auto m2 = new Matrix<T>(Mult_AR, Mult_AR);
-    m2->set_to_random(LB, UB);
-    m2->display("m2", true);
+    auto M2 = new Matrix<T>(MULT_AR, MULT_AR);
+    M2->set_to_random(LB, UB);
+    M2->display("M2", true);
 
-    auto p1 = m1->TB_multiply(m2)->display("p1 (textbook multiply)", true);
-    auto p2 = m1->SB_multiply(m2)->display("p2 (Strassen multiply)", true);
+    auto P1 = M1->TB_multiply(M2)->display("P1 (Textbook M1 * M2)", true);
+    auto P2 = M1->SB_multiply(M2)->display("P2 (Strassen M1 * M2)", true);
 
-    test_equals(p1, p2,
-        "p1 (textbook multiply)", "p2 (Strassen multiply)", 0.000001);
+    test_equals(P1, P2,
+        "P1 (Textbook M1 * M2)", "P2 (Strassen M1 * M2)", 0.000001);
 }
 
 // ----------------------------------------------------
