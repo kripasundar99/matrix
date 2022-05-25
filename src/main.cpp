@@ -5,6 +5,8 @@ U AR = 3;   // number of rows in A
 U AC = 5;   // number of cols in A; also number of rows in B
 U BC = 4;   // number of cols in B
 
+U Mult_AR = 8;  // needs to be a power of 2
+
 // settings for matrix contents
 int UB = 8; // upper bound for data entries
 
@@ -12,31 +14,67 @@ int UB = 8; // upper bound for data entries
 U BR = AC;      // do not edit: number of rows in B == number of cols in A
 int LB = -UB;   // do not edit: lower bound == -(upper bound)
 
-void Process_ARGV(int argc, char* argv[])
+// ----------------------------------------------------
+
+static void Print_usage_and_exit(const char* argv[],
+    const char* error_msg = nullptr)
+{
+    if (error_msg != nullptr)
+        fprintf(stderr, "Error: %s\n\n", error_msg);
+
+    fprintf(stderr,
+        "Usage: %s [-h | <XP> <UB>]\n"
+        "Options:\n"
+        "* -h = this help message\n"
+        "* <XP> = exponent\n"
+        "  - must be a positive integer between 1 and 20\n"
+        "  - 2**<XP> will be the number of rows/columns in test matrices\n"
+        "* <UB> = upper bound\n"
+        "  - must be a positive integer between 1 and 1000\n"
+        "  - the contents of the test matrices will range from -UB to UB\n",
+        argv[0]);
+
+    exit (error_msg == nullptr);
+}
+
+// ----------------------------------------------------
+
+static void Process_ARGV(int argc, const char* argv[])
 {
     assert(argc >= 1);
 
     if (argc == 1)
         return;
 
-    if (!strcmp(argv[1], "-h") || (argc != 5))
-    {
-        printf("Usage: %s [<AR> <AC|BR> <BC> <UB>]\n", argv[0]);
-        exit(0);
-    }
+    if (!strcmp(argv[1], "-h"))
+        Print_usage_and_exit(argv,
+            (argc == 2) ? nullptr : "Too many arguments");
 
-    assert (argc == 5);
+    if (argc != 3)
+        Print_usage_and_exit(argv,
+            "Incorrect arguments: Expected to find <XP> and <UB>");
 
-    AR = atoi(argv[1]);
-    AC = atoi(argv[2]);
-    BR = AC;
-    BC = atoi(argv[3]);
+    U exponent = atoi(argv[1]);
+    if ((exponent <= 0) || (exponent > 20))
+        Print_usage_and_exit(argv,
+            "Incorrect argument: <XP> out of range");
 
-    UB = atoi(argv[4]);
+    Mult_AR = 1 << exponent;
+
+    UB = atoi(argv[2]);
+    if ((UB <= 0) || (UB > 1000))
+        Print_usage_and_exit(argv,
+            "Incorrect argument: <UB> out of range");
+
     LB = -UB;
 
-    DPRINTF(1)("m1 needs to be %dx%d; m2 needs to be %dx%d\n", AR, AC, BR, BC);
+    printf(
+        "We will use 2**%d x 2**%d matrices,"
+        " with contents ranging from %d to %d.\n",
+        exponent, exponent, LB, UB);
 }
+
+// ----------------------------------------------------
 
 template<typename T>
 bool test_equals(const Matrix<T>* m1, const Matrix<T>* m2, string s1, string s2,
@@ -56,14 +94,16 @@ bool test_equals(const Matrix<T>* m1, const Matrix<T>* m2, string s1, string s2,
     char tolerance_msg[512] = {};
     if (tolerance > 0)
     {
-        sprintf(tolerance_msg, ", with tolerance %f", tolerance);
+        sprintf(tolerance_msg, "With tolerance %f, ", tolerance);
     }
 
-    printf("%s %s %s%s\n----\n", s1.c_str(), cmp_status_msg, s2.c_str(),
-        tolerance_msg);
+    printf("%s%s %s %s.\n----\n", tolerance_msg,
+        s1.c_str(), cmp_status_msg, s2.c_str());
 
     return cmp_status;
 }
+
+// ----------------------------------------------------
 
 template<typename T>
 void test_basic_ops()
@@ -136,6 +176,7 @@ void test_basic_ops()
     m3->add(m4)->display("m3+m4");
 } // test_basic_ops()
 
+// ----------------------------------------------------
 
 template<typename T>
 void test_basic_ops_blocks()
@@ -177,6 +218,8 @@ void test_basic_ops_blocks()
         ->display("multiply_blocks(AR,1,2,2,1)", true);
 }
 
+// ----------------------------------------------------
+
 template<typename T>
 void test_assemble()
 {
@@ -202,16 +245,16 @@ void test_assemble()
     r1->display("r1", true);
 }
 
+// ----------------------------------------------------
+
 template<typename T>
 void test_BB_multiply()
 {
-    U AR1 = 4; // need power of 2
-
-    auto m1 = new Matrix<T>(AR1, AR1);
+    auto m1 = new Matrix<T>(Mult_AR, Mult_AR);
     m1->set_to_random(LB, UB);
     m1->display("m1", true);
 
-    auto m2 = new Matrix<T>(AR1, AR1);
+    auto m2 = new Matrix<T>(Mult_AR, Mult_AR);
     m2->set_to_random(LB, UB);
     m2->display("m2", true);
 
@@ -222,16 +265,16 @@ void test_BB_multiply()
         "p1 (textbook multiply)", "p2 (block-based multiply)", 0.000001);
 }
 
+// ----------------------------------------------------
+
 template<typename T>
 void test_SB_multiply()
 {
-    U AR1 = 32; // need power of 2
-
-    auto m1 = new Matrix<T>(AR1, AR1);
+    auto m1 = new Matrix<T>(Mult_AR, Mult_AR);
     m1->set_to_random(LB, UB);
     m1->display("m1", true);
 
-    auto m2 = new Matrix<T>(AR1, AR1);
+    auto m2 = new Matrix<T>(Mult_AR, Mult_AR);
     m2->set_to_random(LB, UB);
     m2->display("m2", true);
 
@@ -242,7 +285,9 @@ void test_SB_multiply()
         "p1 (textbook multiply)", "p2 (Strassen multiply)", 0.000001);
 }
 
-int main(int argc, char* argv[])
+// ----------------------------------------------------
+
+int main(int argc, const char* argv[])
 {
     Process_ARGV(argc, argv);
 

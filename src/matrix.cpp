@@ -206,11 +206,11 @@ void Matrix<T>::set_to_identity()
 // ----------------------------------------------------
 
 template<typename T>
-void Matrix<T>::set_to_identity(U nr)
+void Matrix<T>::set_to_identity(U n)
 {
     delete [] data;
 
-    nRows = nCols = nr;
+    nRows = nCols = n;
     data  = new T[nRows * nCols];
 
     set_to_zero();

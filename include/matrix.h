@@ -31,12 +31,11 @@ It is, of course, not meaningful to C++.
 
 ------------------------------------------------------------------------
 
-Methods:
-
-* operations that modify A->data
-  - they often have the prefix `set_to_` or `set_block_to_`.
-  - they modify `data` in-place.
-  - they do *not* modify `nRows` or `nCols`.
+Methods that modify `A->data`:
+* They often have the prefix `set_to_` or `set_block_to_`.
+* They modify `data` in-place.
+* They do not modify `nRows` or `nCols`.
+  - Exception: `void set_to_identity(U size)`
 
 ------------------------------------------------------------------------
 

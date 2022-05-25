@@ -1,27 +1,41 @@
-# Matrix utilities
+# Simple implementation of matrix multiplication
 
-A few basic utilities for processing matrices.
+This repo is a proof of concept for matrix multiplication.
+It provides the following.
 
-------------
+## Multiplication algorithms
 
-Implemented:
-* modify the whole matrix in-place
-  - <code>set_to_zero</code>, <code>set_to_identity</code>
-  - <code>set_to_copy</code>, <code>set_to_random</code>
+Straightforward implementations of three matrix multiplication algorithms:
 
-* unary arithmetic operations:
-  - <code>get_negative</code>
+1. Textbook multiplication - the straightforward textbook definition of matrix multiplication.
+2. Block-based multiplication - a simple block-based divide-and-conquer algorithm.
+3. Strassen multiplication - Strassen's algorithm.
 
-* binary arithmetic operations:
-  - <code>add</code>, <code>subtract</code>, <code>multiply</code>
+Source for the algorithms:
+https://en.wikipedia.org/wiki/Strassen_algorithm#Algorithm
 
-* binary boolean operations:
-  - <code>equals</code>, <code>dimensions_match</code>
+## Helper methods
 
-------------
+Several helper methods, including:
 
-Not yet implemented.
-* unary operations:
-  - <code>get_determinant</code>, <code>get_inverse</code>
-* binary operations:
-  - <code>multiply_by_Strassen</code>
+* methods to initialize matrix contents to zero, identity, or random
+* addition/subtraction/multiplication of blocks within matrices
+
+## Simple self-testing
+
+We test `int` and `double` matrices.
+
+We self-test algorithms #2 (block-based) and #3 (Strassen) by comparing their
+output with that of algorithm #1 (textbook).
+
+# Future directions
+
+Here are some directions in which we can expand this repo:
+
+* add debugging capabilities
+* add better unit tests
+* parallelize algorithms #2 and #3
+* quantify the performance of the algorithms (serial and parallel versions)
+* add arbitrary precision arithmetic
+* add more matrix operations (calculating the determinant, the inverse, etc.)
+
