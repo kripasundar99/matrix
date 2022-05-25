@@ -111,6 +111,25 @@ template<typename T> inline const char* GFS_display();
 template<> inline const char* GFS_display<int>()    { return "%4d%c"; }
 template<> inline const char* GFS_display<double>() { return "%8.2f%c"; }
 
+// display a block of the matrix
+template<typename T>
+void Matrix<T>::display_block(string label, U size,
+    U init_row /* = 0 */, U init_col /* = 0 */) const
+{
+    assert(nRows >= (init_row + size));
+    assert(nCols >= (init_col + size));
+
+    printf("%s: %d x %d; size = %d; init = [%d, %d]\n",
+        label.c_str(), nRows, nCols, size, init_row, init_col);
+
+    for (U i = 0; i < size; i++)
+        for (U j = 0; j < size; j++)
+            printf(GFS_display<T>(), get_IJ(init_row + i, init_col + j),
+                ((j == (size-1)) ? '\n' : ' '));
+
+    printf("----\n");
+}
+
 // display the matrix
 template<typename T>
 const Matrix<T>* Matrix<T>::display(string label /* = "{unknown matrix}" */,
@@ -359,6 +378,10 @@ Matrix<T>* Matrix<T>::helper_for_add_sub_blocks(bool isAddition,
             throw std::invalid_argument(msg);
         }
 
+        const auto A = this;
+        A->display_block("X", size, init_row_A, init_col_A);
+        B->display_block("Y", size, init_row_B, init_col_B);
+
         Matrix<T>* C = new Matrix<T>(size, size);
 
         for (U i = 0; i < size; i++)
@@ -372,6 +395,7 @@ Matrix<T>* Matrix<T>::helper_for_add_sub_blocks(bool isAddition,
             }
         }
 
+        C->display_block((isAddition ? "X+Y" : "X-Y"), size);
         return C;
     }
     catch(std::exception &e)
@@ -487,6 +511,10 @@ Matrix<T>* Matrix<T>::multiply_blocks(const Matrix<T>* B, U size,
             (BR < (init_row_B + size)) || (BC < (init_col_B + size)))
             throw std::invalid_argument( "multiply_blocks(): sub-matrix doesn't fit" );
 
+        const auto A = this;
+        A->display_block("X", size, init_row_A, init_col_A);
+        B->display_block("Y", size, init_row_B, init_col_B);
+
         Matrix<T>* C = new Matrix<T>(size, size);
 
         for (U i = 0; i < size; i++)
@@ -513,6 +541,7 @@ Matrix<T>* Matrix<T>::multiply_blocks(const Matrix<T>* B, U size,
             }
         }
 
+        C->display_block("X*Y", size);
         return C;
     }
     catch(std::exception &e)

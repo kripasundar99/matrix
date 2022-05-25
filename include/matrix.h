@@ -106,6 +106,15 @@ public:
         U init_row_A = 0, U init_col_A = 0, U init_row_B = 0, U init_col_B = 0);
 
     // ---------------- methods that do not modify A ---------------- //
+
+    // Display a block of A.
+    // Unlike display():
+    // * keep `label` mandatory
+    // * always show `data`
+    // * do not return anything
+    void display_block(string label, U size,
+        U init_row = 0, U init_col = 0) const;
+
     // Display some info about A.
     // If always_show_data is set, or DEBUG_LEVEL is non-zero, show the
     // contents of the matrix.
