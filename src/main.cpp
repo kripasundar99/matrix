@@ -42,6 +42,14 @@ template<typename T>
 bool test_equals(const Matrix<T>* m1, const Matrix<T>* m2, string s1, string s2,
     double tolerance = 0)
 {
+    if (tolerance > 0)
+    {
+        // First try out zero tolerance.
+        // If that succeeds, we don't need to test with non-zero tolerance.
+        if (test_equals(m1, m2, s1, s2))
+            return true;
+    }
+
     bool cmp_status = m1->equals(m2, tolerance);
     const char* cmp_status_msg = (cmp_status ? "equals" : "does not equal");
 
@@ -199,56 +207,53 @@ void test_BB_multiply()
 {
     U AR1 = 4; // need power of 2
 
-    auto s1 = new Matrix<T>(AR1, AR1);
-    s1->set_to_random(LB, UB);
-    s1->display("s1", true);
+    auto m1 = new Matrix<T>(AR1, AR1);
+    m1->set_to_random(LB, UB);
+    m1->display("m1", true);
 
-    auto s2 = new Matrix<T>(AR1, AR1);
-    s2->set_to_random(LB, UB);
-    s2->display("s2", true);
+    auto m2 = new Matrix<T>(AR1, AR1);
+    m2->set_to_random(LB, UB);
+    m2->display("m2", true);
 
-    auto p1 = s1->TB_multiply(s2);
-    p1->display("p1", true);
+    auto p1 = m1->TB_multiply(m2)->display("p1 (textbook multiply)", true);
+    auto p2 = m1->BB_multiply(m2)->display("p2 (block-based multiply)", true);
 
-    auto p2 = s1->BB_multiply(s2);
-    p2->display("p2", true);
-
-    test_equals(p1, p2, "p1", "p2") ||
-        test_equals(p1, p2, "p1", "p2", 0.000001);
+    test_equals(p1, p2,
+        "p1 (textbook multiply)", "p2 (block-based multiply)", 0.000001);
 }
 
 template<typename T>
 void test_SB_multiply()
 {
-    U AR1 = 4; // need power of 2
+    U AR1 = 32; // need power of 2
 
-    auto s1 = new Matrix<T>(AR1, AR1);
-    s1->set_to_random(LB, UB);
-    s1->display("s1", true);
+    auto m1 = new Matrix<T>(AR1, AR1);
+    m1->set_to_random(LB, UB);
+    m1->display("m1", true);
 
-    auto s2 = new Matrix<T>(AR1, AR1);
-    s2->set_to_random(LB, UB);
-    s2->display("s2", true);
+    auto m2 = new Matrix<T>(AR1, AR1);
+    m2->set_to_random(LB, UB);
+    m2->display("m2", true);
 
-    auto p1 = s1->TB_multiply(s2)->display("p1", true);
-    auto p2 = s1->SB_multiply(s2)->display("p2", true);
+    auto p1 = m1->TB_multiply(m2)->display("p1 (textbook multiply)", true);
+    auto p2 = m1->SB_multiply(m2)->display("p2 (Strassen multiply)", true);
 
-    test_equals(p1, p2, "p1", "p2") ||
-        test_equals(p1, p2, "p1", "p2", 0.000001);
+    test_equals(p1, p2,
+        "p1 (textbook multiply)", "p2 (Strassen multiply)", 0.000001);
 }
 
 int main(int argc, char* argv[])
 {
     Process_ARGV(argc, argv);
 
-    // test `int` operations
+    // Tests for operations on `int` matrices.
     //test_basic_ops<int>();
     //test_basic_ops_blocks<int>();
     //test_assemble<int>();
     //test_BB_multiply<int>();
-    test_SB_multiply<int>();
+    //test_SB_multiply<int>();
 
-    // test `double` operations
+    // Tests for operations on `double` matrices.
     //test_basic_ops<double>();
     //test_basic_ops_blocks<double>();
     //test_assemble<double>();
