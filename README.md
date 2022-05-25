@@ -14,6 +14,9 @@ Straightforward implementations of three matrix multiplication algorithms:
 Source for the algorithms:
 https://en.wikipedia.org/wiki/Strassen_algorithm#Algorithm
 
+Note: Currently, algorithms #2 and #3 only apply to the top level of the input
+matrices.  At lower levels, they revert to textbook multiplication.
+
 ## Helper methods
 
 Several helper methods, including:
@@ -101,6 +104,7 @@ We can expand this repo in several directions.
 
 ## Functionality
 
+* make algorithms #2 and #3 recurse to lower levels
 * parallelize algorithms #2 and #3
 * quantify the performance of the algorithms (serial and parallel versions)
 * add arbitrary precision arithmetic
