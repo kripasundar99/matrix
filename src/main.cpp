@@ -6,7 +6,7 @@ U AC = 5;   // number of cols in A; also number of rows in B
 U BC = 4;   // number of cols in B
 
 // settings for matrix contents
-int UB = 1; // upper bound for data entries
+int UB = 8; // upper bound for data entries
 
 // do not modify: derived values
 U BR = AC;      // do not edit: number of rows in B == number of cols in A
@@ -39,7 +39,7 @@ void Process_ARGV(int argc, char* argv[])
 }
 
 template<typename T>
-void test_equals(const Matrix<T>* m1, const Matrix<T>* m2, string s1, string s2,
+bool test_equals(const Matrix<T>* m1, const Matrix<T>* m2, string s1, string s2,
     double tolerance = 0)
 {
     bool cmp_status = m1->equals(m2, tolerance);
@@ -53,6 +53,8 @@ void test_equals(const Matrix<T>* m1, const Matrix<T>* m2, string s1, string s2,
 
     printf("%s %s %s%s\n----\n", s1.c_str(), cmp_status_msg, s2.c_str(),
         tolerance_msg);
+
+    return cmp_status;
 }
 
 template<typename T>
@@ -211,9 +213,8 @@ void test_BB_multiply()
     auto p2 = s1->BB_multiply(s2);
     p2->display("p2", true);
 
-    test_equals(p1, p2, "p1", "p2");
-
-    test_equals(p1, p2, "p1", "p2", 0.000001);
+    test_equals(p1, p2, "p1", "p2") ||
+        test_equals(p1, p2, "p1", "p2", 0.000001);
 }
 
 template<typename T>
@@ -232,9 +233,8 @@ void test_SB_multiply()
     auto p1 = s1->TB_multiply(s2)->display("p1", true);
     auto p2 = s1->SB_multiply(s2)->display("p2", true);
 
-    test_equals(p1, p2, "p1", "p2");
-
-    test_equals(p1, p2, "p1", "p2", 0.000001);
+    test_equals(p1, p2, "p1", "p2") ||
+        test_equals(p1, p2, "p1", "p2", 0.000001);
 }
 
 int main(int argc, char* argv[])
@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
     //test_basic_ops_blocks<double>();
     //test_assemble<double>();
     //test_BB_multiply<double>();
-    //test_SB_multiply<double>();
+    test_SB_multiply<double>();
 
     return 0;
 }
