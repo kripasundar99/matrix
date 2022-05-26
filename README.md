@@ -106,20 +106,26 @@ $
 
 # Future directions
 
-We can expand this repo in several directions.
+We can expand the functionality, quality, and usability of this repo in several directions.
 
 ## Functionality
 
 * make algorithms #2 and #3 recurse to lower levels
 * parallelize algorithms #2 and #3
-* quantify the performance of the algorithms (serial and parallel versions)
 * add arbitrary precision arithmetic
+* provide configuration parameters for the user to control
+  - recursion depth
+  - type of parallelism
+  - amount of parallelism
+  - etc.
 * add more matrix operations (calculating the determinant, the inverse, etc.)
 
 ## Quality
 
 * add debugging capabilities
 * add better unit tests
+* quantify the performance of the algorithms (serial and parallel versions)
+* optimize space usage, by re-using memory blocks whenever possible
 
 ## Usability
 
