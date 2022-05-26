@@ -5,11 +5,11 @@ It provides the following.
 
 ## Multiplication algorithms
 
-Straightforward implementations of three matrix multiplication algorithms:
+Three matrix multiplication algorithms:
 
-1. Textbook multiplication - the straightforward textbook definition of matrix multiplication.
-2. Block-based multiplication - a simple block-based divide-and-conquer algorithm.
-3. Strassen multiplication - Strassen's algorithm.
+1. `TB_multiply()` - the straightforward textbook definition of matrix multiplication.
+2. `BB_multiply()` - a simple block-based divide-and-conquer algorithm.
+3. `SB_multiply()` - Strassen's algorithm.
 
 Source for the algorithms:
 https://en.wikipedia.org/wiki/Strassen_algorithm#Algorithm
@@ -98,6 +98,12 @@ With tolerance 0.000001, P1 (Textbook M1 * M2) equals P2 (Strassen M1 * M2).
 $
 ```
 
+# Source code structure
+
+* `matrix.h` - declares the `Matrix<T>` class template
+* `matrix.cpp` - defines most of the `Matrix<T>` methods
+* `main.cpp` - tests the implementation
+
 # Future directions
 
 We can expand this repo in several directions.
@@ -123,3 +129,4 @@ We can expand this repo in several directions.
   - output precision
   - output format
   - etc.
+* improve display formatting (alignment) for large numbers
