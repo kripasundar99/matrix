@@ -1,10 +1,9 @@
 # Simple implementation of matrix multiplication
 
-This repo demonstrates three matrix multiplication algorithms: textbook,
-block-based, and Strassen.
+This repo demonstrates three matrix multiplication algorithms: Textbook,
+Block-based, and Strassen.
 
-The repo provides the three algorithms, some helper methods, and some simple
-self-testing.
+It also provides several helper methods and some simple self-testing logic.
 
 ## Multiplication algorithms
 
