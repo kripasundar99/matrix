@@ -288,11 +288,12 @@ template<> inline const char* GFS_equals1<double>()
 template<typename T> inline const char* GFS_equals2();
 template<> inline const char* GFS_equals2<int>()
 {
-    return "a = m1[%d][%d] = %d; m2 = B[%d][%d] = %d; a - b = %d\n";
+    return "* p1 = P1[%d][%d] = %d;\n* p2 = P2[%d][%d] = %d;\n* p1 - p2 = %d\n";
 }
 template<> inline const char* GFS_equals2<double>()
 {
-    return "a = m1[%d][%d] = %40.40f; b = m2[%d][%d] = %40.40f; a - b = %40.40f\n";
+    return "* p1 = P1[%d][%d] = %40.40f;\n* p2 = P2[%d][%d] = %40.40f;\n"
+        "* p1 - p2 = %40.40f\n";
 }
 
 // TODO:
@@ -320,13 +321,16 @@ bool Matrix<T>::equals(const Matrix<T>* B, double tolerance /* = 0 */) const
             T a = get_IJ(i, j);
             T b = B->get_IJ(i, j);
 
-            DPRINTF(1)(GFS_equals1<T>(), i, j, a, b, a - b);
+            // When `tolerance` is zero, I always (even in non-debug mode)
+            // want to show the very first difference.
+            // When `tolerance` is non-zero, I want to display diffs only in
+            // debug mode.
+            // DPRINTF(tolerance) achieves this.
+            if (a != b)
+                DPRINTF(tolerance)(GFS_equals2<T>(), i, j, a, i, j, b, a - b);
 
             if (abs(a - b) > tolerance)
-            {
-                DPRINTF(1)(GFS_equals2<T>(), i, j, a, i, j, b, a - b);
                 return false;
-            }
         }
     }
 
