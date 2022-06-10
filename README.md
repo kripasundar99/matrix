@@ -1,7 +1,10 @@
 # Simple implementation of matrix multiplication
 
-This repo is a proof of concept for matrix multiplication.
-It provides the following.
+This repo demonstrates three matrix multiplication algorithms: textbook,
+block-based, and Strassen.
+
+The repo provides the three algorithms, some helper methods, and some simple
+self-testing.
 
 ## Multiplication algorithms
 
@@ -91,12 +94,25 @@ P2 (Strassen M1 * M2): 8 x 8
     2.60    -0.14    -0.65    -0.96     0.11    -0.14    -0.83    -0.24
    -0.36     0.45    -0.87    -0.19    -1.61    -0.11     1.93    -0.75
 ----
-P1 (Textbook M1 * M2) does not equal P2 (Strassen M1 * M2).
+* p1 = P1[0][0] = -1.3954467117452666879984235492884181439877;
+* p2 = P2[0][0] = -1.3954467117452673541322383243823423981667;
+* p1 - p2 = 0.0000000000000006661338147750939242541790
+With zero tolerance, P1 (Textbook M1 * M2) does not equal P2 (Strassen M1 * M2).
 ----
-With tolerance 0.000001, P1 (Textbook M1 * M2) equals P2 (Strassen M1 * M2).
+With tolerance 0.0000000001, P1 (Textbook M1 * M2) equals P2 (Strassen M1 * M2).
 ----
 $
 ```
+
+**Tolerance:**
+Because of divergence in floating point calculations, Textbook multiplication
+and Strassen multiplication sometimes disagree beyond 15 or 16 decimal places.
+
+Therefore, for floating point matrices, we check for equality twice: first
+with zero tolerance, and then with tolerance set to `0.0000000001`.
+
+In the above example, `P1[0][0]` and `P2[0][0]` differ from the 16th decimal
+place.
 
 # Source code structure
 
