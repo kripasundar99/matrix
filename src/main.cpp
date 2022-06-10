@@ -10,6 +10,9 @@ U MULT_AR = 8;  // needs to be a power of 2
 // settings for matrix contents
 int UB = 30; // upper bound for data entries
 
+// other settings
+double TOLERANCE = 0.0000000001;
+
 // do not modify: values derived from above variables
 U BR = AC;      // do not edit: number of rows in B == number of cols in A
 int LB = -UB;   // do not edit: lower bound == -(upper bound)
@@ -93,15 +96,16 @@ bool test_equals(const Matrix<T>* m1, const Matrix<T>* m2, string s1, string s2,
 
     char tolerance_msg[512] = {};
     if (tolerance > 0)
-    {
-        sprintf(tolerance_msg, "With tolerance %f, ", tolerance);
-    }
+        sprintf(tolerance_msg, "With tolerance %10.10f", tolerance);
+    else
+        strcpy(tolerance_msg, "With zero tolerance");
 
-    printf("%s%s %s %s.\n----\n", tolerance_msg,
+    printf("%s, %s %s %s.\n----\n", tolerance_msg,
         s1.c_str(), cmp_status_msg, s2.c_str());
 
     return cmp_status;
 }
+
 
 // ----------------------------------------------------
 
@@ -262,7 +266,7 @@ void test_BB_multiply()
     auto P2 = M1->BB_multiply(M2)->display("P2 (Block-based M1 * M2)", true);
 
     test_equals(P1, P2,
-        "P1 (Textbook M1 * M2)", "P2 (Block-based M1 * M2)", 0.000001);
+        "P1 (Textbook M1 * M2)", "P2 (Block-based M1 * M2)", TOLERANCE);
 }
 
 // ----------------------------------------------------
@@ -282,7 +286,7 @@ void test_SB_multiply()
     auto P2 = M1->SB_multiply(M2)->display("P2 (Strassen M1 * M2)", true);
 
     test_equals(P1, P2,
-        "P1 (Textbook M1 * M2)", "P2 (Strassen M1 * M2)", 0.000001);
+        "P1 (Textbook M1 * M2)", "P2 (Strassen M1 * M2)", TOLERANCE);
 }
 
 // ----------------------------------------------------
