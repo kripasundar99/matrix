@@ -137,16 +137,17 @@ We can expand the functionality, quality, and usability of this repo in several 
   - etc.
 * add more matrix operations (calculating the determinant, the inverse, etc.)
 
-## Quality
+## Quality of code
 
-* add debugging capabilities
+* use smart pointers
 * add better unit tests
+* add debugging capabilities
 * quantify the performance of the algorithms (serial and parallel versions)
-* optimize space usage, by re-using memory blocks whenever possible
+* optimize space usage, by re-using allocated memory blocks whenever possible
 
 ## Usability
 
-* command-line options for
+* add command-line options for
   - verbosity
   - debugging
   - output precision
