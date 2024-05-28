@@ -139,6 +139,7 @@ We can expand the functionality, quality, and usability of this repo in several 
 
 ## Quality of code
 
+* provide operators for basic operations
 * use smart pointers
 * add better unit tests
 * add debugging capabilities

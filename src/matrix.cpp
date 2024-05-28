@@ -292,7 +292,9 @@ template<> inline const char* GFS_equals2<int>()
 }
 template<> inline const char* GFS_equals2<double>()
 {
-    return "* p1 = P1[%d][%d] = %40.40f;\n* p2 = P2[%d][%d] = %40.40f;\n"
+    return
+        "* p1 = P1[%d][%d] = %40.40f;\n"
+        "* p2 = P2[%d][%d] = %40.40f;\n"
         "* p1 - p2 = %40.40f\n";
 }
 
